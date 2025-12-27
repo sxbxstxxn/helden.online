@@ -1,6 +1,7 @@
 .venv
 unsorted/*
 unsorted
+unsorted/info.txt
 .idea*
 heon/__pycache__/
 web/__pycache__/

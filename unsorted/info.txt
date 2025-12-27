@@ -39,3 +39,8 @@ blue
 
 red
 C60216
+
+
+{% if request.user.is_authenticated %}
+
+{% endif %}
