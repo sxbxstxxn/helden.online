@@ -7,8 +7,11 @@
 ../*.env
 .venv
 unsorted/*
+/unsorted/*
 unsorted
+/unsorted
 unsorted/info.txt
+/unsorted/info.txt
 .idea*
 heon/__pycache__/
 web/__pycache__/
