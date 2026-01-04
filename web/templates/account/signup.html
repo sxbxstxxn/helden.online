@@ -31,7 +31,7 @@
                 {{ redirect_field }}
             {% endslot %}
             {% slot actions %}
-                {% element button tags="prominent,signup" type="submit" %}
+                {% element button tags="prominent,signup" type="submit" class="heon-button heon-dark-grey heon-right" %}
                     {% trans "Sign Up" %}
                 {% endelement %}
             {% endslot %}
@@ -40,7 +40,7 @@
     {% if PASSKEY_SIGNUP_ENABLED %}
         {% element hr %}
         {% endelement %}
-        {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+        {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" class="heon-button heon-dark-grey heon-right" %}
             {% trans "Sign up using a passkey" %}
         {% endelement %}
     {% endif %}

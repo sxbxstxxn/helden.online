@@ -26,11 +26,16 @@
                 {{ redirect_field }}
             {% endslot %}
             {% slot actions %}
-                {% element button type="submit" tags="prominent,login" %}
+                <a href="{{ signup_url }}">Neuen Account einrichten</a>
+                {% element button type="submit" tags="prominent,login" class="heon-button heon-dark-grey heon-right" %}
                     {% trans "Sign In" %}
                 {% endelement %}
             {% endslot %}
         {% endelement %}
+
+
+
+
     {% endif %}
 
 

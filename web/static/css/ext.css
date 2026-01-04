@@ -224,6 +224,40 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .heon-pale-blue,.heon-hover-pale-blue:hover{color:#000!important;background-color:#ddffff!important}
 */
 
+
+/* Forms */
+label {display: block;}
+
+input[type=text],input[type=password], input[type=email], select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+.errorlist {
+    background-color: var(--heon-greylight);
+    color: var(--heon-red);
+}
+
 footer {
     position: absolute;
     bottom: 0px;
