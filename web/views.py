@@ -1,19 +1,10 @@
 from django import forms
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from allauth.account.models import EmailAddress
-
-class MeinAccountForm(forms.ModelForm):
-	class Meta:
-		model = User
-		fields = ['first_name', 'last_name']
-		widgets = {
-			'first_name': forms.TextInput(attrs={'class': 'heon-input'}),
-			'last_name': forms.TextInput(attrs={'class': 'heon-input'}),
-		}
+from .forms import MeinAccountForm
 
 class ContactForm(forms.Form):
 	name = forms.CharField(label='Name', max_length=100, widget=forms.TextInput(attrs={'class': 'heon-input'}))
@@ -84,7 +75,7 @@ def kontakt(request):
 				full_subject,
 				full_message,
 				settings.DEFAULT_FROM_EMAIL,
-				['mail@helden.online'],
+				[settings.CONTACT_EMAIL],
 				reply_to=[email],
 			)
 			email_message.send()

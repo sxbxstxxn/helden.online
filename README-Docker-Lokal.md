@@ -161,3 +161,18 @@ SECRET_KEY=dev-only-helden-online-change-me
 ```
 
 Für Produktion immer einen neuen geheimen Wert verwenden und `DEBUG=False` setzen.
+
+## WICHTIG: `.env` nicht ins Repository
+
+Die Datei `.env` enthält geheime Werte (z. B. `SECRET_KEY`, Datenbank- und E-Mail-Zugangsdaten) und darf nicht versioniert werden.
+
+- Lege deine lokale Konfiguration aus `.env.example` an:
+
+```bash
+cp .env.example .env
+```
+
+- Passe die Werte in `.env` an (vor allem `SECRET_KEY` und `DEBUG`).
+- Committe niemals `.env`; die Projekt-`.gitignore` enthält bereits eine Regel für `.env`.
+
+Wenn `.env` versehentlich in das Git-Repository committed wurde, entferne die Datei aus der Historie und ersetze kompromittierte Geheimnisse (z. B. `SECRET_KEY`).

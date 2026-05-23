@@ -1,4 +1,8 @@
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 os.chdir(r'c:\webprojects\helden.online\web\templates')
 
@@ -93,7 +97,7 @@ datenschutz_content = """{% extends 'base.html' %}
 c/o POSTFLEX PFX-796-792<br/>
 Emsdettener Straße 10<br/>
 48268 Greven</p>
-                <p>E-Mail: <a href="mailto:mail@helden.online">mail@helden.online</a></p>
+                <p>E-Mail: <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></p>
 
                 <h4>2. Erfasste Daten</h4>
                 <p>Beim Aufruf unserer Website werden automatisch Informationen verarbeitet, die Ihr Browser übermittelt. Dazu gehören insbesondere:</p>
@@ -162,13 +166,13 @@ def create_template(name, icon):
 {{%% endblock content %%}}"""
 
 # Write files
-with open('sidebar.html', 'w', encoding='utf-8') as f:
-    f.write(sidebar_content)
-print('sidebar.html written')
+    with open('sidebar.html', 'w', encoding='utf-8') as f:
+    	f.write(sidebar_content)
+logger.info('sidebar.html written')
 
 with open('datenschutz.html', 'w', encoding='utf-8') as f:
     f.write(datenschutz_content)
-print('datenschutz.html written')
+logger.info('datenschutz.html written')
 
 templates = [
     ('helden.html', 'Helden', 'accessibility'),
@@ -181,6 +185,6 @@ templates = [
 for filename, name, icon in templates:
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(create_template(name, icon))
-    print(f'{filename} written')
+    logger.info('%s written', filename)
 
-print('All files written with correct UTF-8 encoding')
+logger.info('All files written with correct UTF-8 encoding')
