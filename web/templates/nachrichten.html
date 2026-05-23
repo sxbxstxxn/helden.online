@@ -15,8 +15,8 @@
                 </div>
 
                 <div class="heon-bar heon-margin-bottom" style="display:flex; gap:0.5rem; align-items:center;">
-                    <button class="heon-button heon-white heon-border-right heon-border-grey heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'inbox')">Posteingang</button>
-                    <button class="heon-button heon-white heon-border-right heon-border-grey heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'sent')">Gesendet</button>
+                    <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'inbox')">Posteingang</button>
+                    <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'sent')">Gesendet</button>
                     <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'compose')" style="margin-left:auto">Neue Nachricht</button>
                 </div>
 
@@ -111,10 +111,10 @@ function openNachrichtenTab(evt, tabName) {
     }
     tablinks = document.getElementsByClassName('nachrichten-tablink');
     for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(' heon-blue', '');
+        tablinks[i].className = tablinks[i].className.replace(' heon-orange', '');
     }
     document.getElementById(tabName).style.display = 'block';
-    evt.currentTarget.className += ' heon-blue';
+    evt.currentTarget.className += ' heon-orange';
 }
 
 document.addEventListener('DOMContentLoaded', function() {

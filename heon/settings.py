@@ -157,6 +157,22 @@ CONTACT_EMAIL = env('CONTACT_EMAIL', default=DEFAULT_FROM_EMAIL)
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+RSS_FEED_CACHE_SECONDS = env.int('RSS_FEED_CACHE_SECONDS', default=1800)
+RSS_FEED_ITEMS_PER_SOURCE = env.int('RSS_FEED_ITEMS_PER_SOURCE', default=8)
+RSS_FEED_MAX_ITEMS = env.int('RSS_FEED_MAX_ITEMS', default=24)
+RSS_FEEDS = [
+    {
+        'name': 'DSA Spielen',
+        'slug': 'dsa-spielen',
+        'url': 'https://dsa-spielen.de/feed/',
+    },
+    {
+        'name': 'Nandurion',
+        'slug': 'nandurion',
+        'url': 'https://nandurion.de/feed/',
+    },
+]
+
 
 # AllAuth Configuration
 ACCOUNT_SESSION_REMEMBER = True

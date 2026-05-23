@@ -1,50 +1,40 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}Kontakt{% endblock title %}
+
 {% block content %}
-
-<!-- Header -->
-  <header class="heon-container heon-text-center" style="padding-top:22px">
-    <h5><b><span class="material-icons md-fw">mail</span> Kontakt</b></h5>
-  </header>
-
-    <div class="heon-row" style="padding-top:22px">
-        <div class="heon-col m3 heon-hide-small"> </div>
-        <div class="heon-col m6 s12">
-            <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Kontakt</h2>
+            <p>Schreiben Sie uns Ihre Nachricht. Wir melden uns so schnell wie moeglich zurueck.</p>
+            <div class="heon-container heon-white heon-padding">
                 <h3>Kontaktaufnahme</h3>
-                <p>Schreiben Sie uns Ihre Nachricht. Wir melden uns so schnell wie möglich zurück.</p>
                 {% if sent %}
                     <div class="heon-panel heon-green heon-margin-bottom">Ihre Nachricht wurde erfolgreich versendet.</div>
                 {% elif mail_error %}
                     <div class="heon-panel heon-red heon-margin-bottom">Die Nachricht konnte nicht versendet werden. Bitte versuchen Sie es spaeter erneut.</div>
                 {% elif form.errors %}
-                    <div class="heon-panel heon-red heon-margin-bottom">Bitte überprüfen Sie Ihre Angaben und korrigieren Sie die markierten Felder.</div>
+                    <div class="heon-panel heon-red heon-margin-bottom">Bitte ueberpruefen Sie Ihre Angaben und korrigieren Sie die markierten Felder.</div>
                 {% endif %}
                 <form method="post" class="heon-form">
                     {% csrf_token %}
                     <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
                         {{ form.website }}
                     </div>
-                    <div class="heon-row">
-                        <div class="heon-col s4" style="padding-top:8px"><label for="id_name"><strong>Name</strong></label></div>
-                        <div class="heon-col s8">{{ form.name }}{% if form.name.errors %}<div class="heon-text-red">{{ form.name.errors|striptags }}</div>{% endif %}</div>
-                    </div>
-                    <div class="heon-row" style="margin-top:12px">
-                        <div class="heon-col s4" style="padding-top:8px"><label for="id_email"><strong>E-Mail</strong></label></div>
-                        <div class="heon-col s8">{{ form.email }}{% if form.email.errors %}<div class="heon-text-red">{{ form.email.errors|striptags }}</div>{% endif %}</div>
-                    </div>
-                    <div class="heon-row" style="margin-top:12px">
-                        <div class="heon-col s4" style="padding-top:8px"><label for="id_subject"><strong>Betreff</strong></label></div>
-                        <div class="heon-col s8">{{ form.subject }}{% if form.subject.errors %}<div class="heon-text-red">{{ form.subject.errors|striptags }}</div>{% endif %}</div>
-                    </div>
-                    <div class="heon-row" style="margin-top:12px">
-                        <div class="heon-col s4" style="padding-top:8px"><label for="id_message"><strong>Nachricht</strong></label></div>
-                        <div class="heon-col s8">{{ form.message }}{% if form.message.errors %}<div class="heon-text-red">{{ form.message.errors|striptags }}</div>{% endif %}</div>
-                    </div>
-                    <p style="margin-top:20px"><button type="submit" class="heon-button heon-dark-grey">Absenden</button></p>
+                    {% include 'includes/account_row.html' with id='id_name' label='Name' field=form.name error=form.name.errors %}
+                    {% include 'includes/account_row.html' with id='id_email' label='E-Mail' field=form.email error=form.email.errors row_style='margin-top:12px' %}
+                    {% include 'includes/account_row.html' with id='id_subject' label='Betreff' field=form.subject error=form.subject.errors row_style='margin-top:12px' %}
+                    {% include 'includes/account_row.html' with id='id_message' label='Nachricht' field=form.message error=form.message.errors row_style='margin-top:12px' %}
+                    <p>
+                        <button type="submit" class="heon-button heon-dark-grey">Absenden</button>
+                    </p>
                 </form>
             </div>
         </div>
-        <div class="heon-col m3"> </div>
     </div>
+    <div class="heon-col m3">&nbsp;</div>
+</div>
 {% endblock content %}

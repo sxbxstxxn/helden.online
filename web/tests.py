@@ -1,11 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.cache import cache
 from django.core.mail.backends.base import BaseEmailBackend
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from smtplib import SMTPException
+from unittest.mock import patch
 
 from .models import Message
+from .rss import get_rss_news
 
 
 class FailingEmailBackend(BaseEmailBackend):
@@ -32,6 +35,63 @@ class LoginRequiredTests(TestCase):
 
                 self.assertEqual(response.status_code, 302)
                 self.assertIn('/accounts/login/', response['Location'])
+
+
+@override_settings(
+    RSS_FEEDS=[{'name': 'Testfeed', 'slug': 'testfeed', 'url': 'https://example.com/rss.xml'}],
+    RSS_FEED_CACHE_SECONDS=60,
+    RSS_FEED_ITEMS_PER_SOURCE=8,
+    RSS_FEED_MAX_ITEMS=24,
+)
+class RssNewsTests(TestCase):
+    rss_xml = b'''<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Erste Meldung</title>
+                    <link>https://example.com/erste</link>
+                    <description>&lt;p&gt;Kurzer Text&lt;/p&gt;</description>
+                    <pubDate>Sat, 23 May 2026 12:00:00 +0000</pubDate>
+                </item>
+            </channel>
+        </rss>
+    '''
+
+    def setUp(self):
+        cache.clear()
+
+    @patch('web.rss._fetch_feed_content')
+    def test_get_rss_news_parses_and_caches_feed_items(self, fetch_feed_content):
+        fetch_feed_content.return_value = self.rss_xml
+
+        first_result = get_rss_news()
+        second_result = get_rss_news()
+
+        self.assertEqual(fetch_feed_content.call_count, 1)
+        self.assertEqual(first_result, second_result)
+        self.assertEqual(first_result[0]['source'], 'Testfeed')
+        self.assertEqual(first_result[0]['source_slug'], 'testfeed')
+        self.assertEqual(first_result[0]['title'], 'Erste Meldung')
+        self.assertEqual(first_result[0]['summary'], 'Kurzer Text')
+
+    @patch('web.views.get_rss_news')
+    def test_start_page_renders_rss_news_and_filter_buttons(self, get_news):
+        User = get_user_model()
+        user = User.objects.create_user(username='reader', password='testpass123')
+        get_news.return_value = [{
+            'source': 'Testfeed',
+            'source_slug': 'testfeed',
+            'title': 'Erste Meldung',
+            'link': 'https://example.com/erste',
+            'summary': 'Kurzer Text',
+            'published_at': None,
+        }]
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('web'))
+
+        self.assertContains(response, 'Erste Meldung')
+        self.assertContains(response, 'data-feed="testfeed"')
 
 
 class MessageViewTests(TestCase):

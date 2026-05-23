@@ -10,6 +10,7 @@ from django.utils import timezone
 from allauth.account.models import EmailAddress
 from .forms import MeinAccountForm, MessageForm
 from .models import Message
+from .rss import get_rss_news
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,10 @@ class ContactForm(forms.Form):
 # Create your views here.
 @login_required
 def web(request):
-	return render(request,'web.html')
+	return render(request, 'web.html', {
+		'rss_feeds': settings.RSS_FEEDS,
+		'news_items': get_rss_news(),
+	})
 
 @login_required
 def helden(request):
