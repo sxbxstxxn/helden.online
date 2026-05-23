@@ -12,7 +12,14 @@
             <p>Willkommen, <strong>{{ user.username }}</strong>.</p>
             <div class="heon-container heon-white heon-padding">
                 <h3>Benutzerdaten</h3>
-                <p><strong>Benutzername:</strong> {{ user.username }}</p>
+                <div class="heon-row">
+                    <div class="heon-col s4" style="padding-top:8px">
+                        <label for="id_username"><strong>Benutzername</strong></label>
+                    </div>
+                    <div class="heon-col s8">
+                        <input type="text" id="id_username" class="heon-input" value="{{ user.username }}" disabled />
+                    </div>
+                </div>
                 {% if saved %}
                     <div class="heon-panel heon-pale-green heon-margin-bottom">Daten erfolgreich gespeichert.</div>
                 {% endif %}
@@ -40,7 +47,27 @@
                             {% endif %}
                         </div>
                     </div>
-                    <p style="margin-top:16px"><strong>Registriert seit:</strong> {{ user.date_joined }}</p>
+                    <div class="heon-row" style="margin-top:12px">
+                        <div class="heon-col s4" style="padding-top:8px">
+                            <label for="id_email"><strong>E-Mail-Adresse</strong></label>
+                        </div>
+                        <div class="heon-col s8">
+                            {% if email_addresses and email_addresses|length > 0 %}
+                                <input type="email" id="id_email" class="heon-input" value="{{ email_addresses.0.email }}" disabled />
+                                {% if email_addresses.0.verified %}<span class="heon-text-green"> (verifiziert)</span>{% endif %}
+                            {% else %}
+                                <input type="email" id="id_email" class="heon-input" value="{{ user.email }}" disabled />
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="heon-row" style="margin-top:16px">
+                        <div class="heon-col s4" style="padding-top:8px">
+                            <label for="id_date_joined"><strong>Registriert seit</strong></label>
+                        </div>
+                        <div class="heon-col s8">
+                            <input type="text" id="id_date_joined" class="heon-input" value="{{ user.date_joined }}" disabled />
+                        </div>
+                    </div>
                     <p>
                         <button type="submit" class="heon-button heon-dark-grey">Speichern</button>
                     </p>
