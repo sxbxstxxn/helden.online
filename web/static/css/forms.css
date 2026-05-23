@@ -51,6 +51,26 @@ h5 {
   margin-left: auto;
 }
 
+.nachrichten-card-list {
+  display: none;
+}
+
+.nachrichten-card {
+  border-top: 1px solid #ddd;
+  display: block;
+  padding: 12px 10px;
+  text-decoration: none;
+}
+
+.nachrichten-card strong,
+.nachrichten-card span {
+  display: block;
+}
+
+.nachrichten-card span {
+  margin-top: 3px;
+}
+
 @media (max-width: 600px) {
   .heon-col.s4.heon-form-row-label,
   .heon-col.s8.heon-form-row-field {
@@ -103,5 +123,13 @@ h5 {
 
   .nachrichten-tablink {
     flex: 1 1 calc(50% - 0.5rem);
+  }
+
+  .nachrichten-table-view {
+    display: none;
+  }
+
+  .nachrichten-card-list {
+    display: block;
   }
 }
