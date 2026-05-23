@@ -13,5 +13,6 @@ unsorted
 unsorted/info.txt
 /unsorted/info.txt
 .idea*
+staticfiles/
 heon/__pycache__/
 web/__pycache__/

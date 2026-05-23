@@ -62,8 +62,8 @@ def mein_account(request):
 
 @login_required
 def nachrichten(request):
-	inbox = request.user.received_messages.select_related('sender')
-	sent_messages = request.user.sent_messages.select_related('recipient')
+	inbox = request.user.received_messages.filter(deleted_by_recipient=False).select_related('sender')
+	sent_messages = request.user.sent_messages.filter(deleted_by_sender=False).select_related('recipient')
 	sent = False
 	if request.method == 'POST':
 		form = MessageForm(request.POST, user=request.user)
@@ -84,7 +84,12 @@ def nachrichten(request):
 
 @login_required
 def nachricht(request, pk):
-	message = get_object_or_404(Message, Q(recipient=request.user) | Q(sender=request.user), pk=pk)
+	message = get_object_or_404(
+		Message,
+		Q(recipient=request.user, deleted_by_recipient=False) |
+		Q(sender=request.user, deleted_by_sender=False),
+		pk=pk,
+	)
 	if message.recipient == request.user and message.read_at is None:
 		message.read_at = timezone.now()
 		message.save(update_fields=['read_at'])
@@ -95,10 +100,14 @@ def nachricht(request, pk):
 
 @login_required
 def nachricht_loeschen(request, pk):
-	message = get_object_or_404(Message, Q(recipient=request.user) | Q(sender=request.user), pk=pk)
-	# allow sender or recipient to delete; actual DB delete
+	message = get_object_or_404(
+		Message,
+		Q(recipient=request.user, deleted_by_recipient=False) |
+		Q(sender=request.user, deleted_by_sender=False),
+		pk=pk,
+	)
 	if request.method == 'POST':
-		message.delete()
+		message.mark_deleted_for(request.user)
 		return redirect('nachrichten')
 	return render(request, 'nachricht_loeschen.html', {'message': message})
 
