@@ -7,7 +7,7 @@ from django.urls import reverse
 from smtplib import SMTPException
 from unittest.mock import patch
 
-from .models import Message
+from .models import Character, Message
 from .rss import get_rss_news
 
 
@@ -27,6 +27,7 @@ class LoginRequiredTests(TestCase):
             reverse('forum'),
             reverse('nachrichten'),
             reverse('mein_account'),
+            reverse('charakter_anlegen'),
         ]
 
         for url in private_urls:
@@ -153,6 +154,111 @@ class MessageViewTests(TestCase):
         response = self.client.get(reverse('nachricht', args=[self.message.pk]))
 
         self.assertEqual(response.status_code, 404)
+
+
+class CharacterViewTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.owner = User.objects.create_user(username='hero_owner', password='testpass123')
+        self.outsider = User.objects.create_user(username='outsider', password='testpass123')
+        self.character = Character.objects.create(
+            owner=self.owner,
+            name='Alrik',
+            species='Mensch',
+            culture='Mittelreich',
+            courage=12,
+            sagacity=11,
+            intuition=13,
+            charisma=10,
+            dexterity=12,
+            agility=13,
+            constitution=11,
+            strength=14,
+        )
+
+    def character_data(self, **overrides):
+        data = {
+            'name': 'Rohaja',
+            'species': 'Mensch',
+            'culture': 'Gareth',
+            'courage': 14,
+            'sagacity': 12,
+            'intuition': 13,
+            'charisma': 15,
+            'dexterity': 11,
+            'agility': 12,
+            'constitution': 13,
+            'strength': 12,
+        }
+        data.update(overrides)
+        return data
+
+    def test_user_can_create_character_as_owner(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(reverse('charakter_anlegen'), self.character_data())
+
+        self.assertRedirects(response, reverse('helden'))
+        character = Character.objects.get(name='Rohaja')
+        self.assertEqual(character.owner, self.owner)
+        self.assertIsNone(character.deleted_at)
+
+    def test_helden_shows_only_own_active_characters(self):
+        Character.objects.create(
+            owner=self.outsider,
+            name='Fremder Held',
+            species='Elf',
+            culture='Auelfen',
+            courage=12,
+            sagacity=12,
+            intuition=12,
+            charisma=12,
+            dexterity=12,
+            agility=12,
+            constitution=12,
+            strength=12,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('helden'))
+
+        self.assertContains(response, 'Alrik')
+        self.assertNotContains(response, 'Fremder Held')
+
+    def test_user_can_edit_own_character(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(
+            reverse('charakter_bearbeiten', args=[self.character.pk]),
+            self.character_data(name='Alrike'),
+        )
+
+        self.assertRedirects(response, reverse('helden'))
+        self.character.refresh_from_db()
+        self.assertEqual(self.character.name, 'Alrike')
+
+    def test_outsider_cannot_edit_character(self):
+        self.client.force_login(self.outsider)
+
+        response = self.client.post(
+            reverse('charakter_bearbeiten', args=[self.character.pk]),
+            self.character_data(name='Gestohlen'),
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.character.refresh_from_db()
+        self.assertEqual(self.character.name, 'Alrik')
+
+    def test_delete_sets_deleted_flag_without_removing_character(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(reverse('charakter_loeschen', args=[self.character.pk]))
+
+        self.assertRedirects(response, reverse('helden'))
+        self.character.refresh_from_db()
+        self.assertIsNotNone(self.character.deleted_at)
+        self.assertTrue(Character.objects.filter(pk=self.character.pk).exists())
+        self.assertNotContains(self.client.get(reverse('helden')), 'Alrik')
 
 
 class MessageDeleteTests(TestCase):

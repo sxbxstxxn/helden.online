@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -45,3 +46,36 @@ class Message(models.Model):
             self.delete()
         elif update_fields:
             self.save(update_fields=update_fields)
+
+
+class Character(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='characters',
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=120)
+    species = models.CharField(max_length=120)
+    culture = models.CharField(max_length=120)
+    courage = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    sagacity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    intuition = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    charisma = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    dexterity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    agility = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    constitution = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    strength = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def mark_deleted(self):
+        if self.deleted_at is None:
+            self.deleted_at = timezone.now()
+            self.save(update_fields=['deleted_at', 'updated_at'])

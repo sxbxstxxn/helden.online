@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<div class="heon-row heon-page-row">
+    <div class="heon-col m3 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <h2>{{ title }}</h2>
+            <div class="heon-container heon-white heon-padding">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="helden-form-section">
+                        <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                        {{ form.name.errors }}
+                        {{ form.name }}
+
+                        <label class="heon-text" for="{{ form.species.id_for_label }}">{{ form.species.label }}</label>
+                        {{ form.species.errors }}
+                        {{ form.species }}
+
+                        <label class="heon-text" for="{{ form.culture.id_for_label }}">{{ form.culture.label }}</label>
+                        {{ form.culture.errors }}
+                        {{ form.culture }}
+                    </div>
+
+                    <h3>Eigenschaften</h3>
+                    <div class="helden-form-grid">
+                        <div>
+                            <label class="heon-text" for="{{ form.courage.id_for_label }}">{{ form.courage.label }}</label>
+                            {{ form.courage.errors }}
+                            {{ form.courage }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.sagacity.id_for_label }}">{{ form.sagacity.label }}</label>
+                            {{ form.sagacity.errors }}
+                            {{ form.sagacity }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.intuition.id_for_label }}">{{ form.intuition.label }}</label>
+                            {{ form.intuition.errors }}
+                            {{ form.intuition }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.charisma.id_for_label }}">{{ form.charisma.label }}</label>
+                            {{ form.charisma.errors }}
+                            {{ form.charisma }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.dexterity.id_for_label }}">{{ form.dexterity.label }}</label>
+                            {{ form.dexterity.errors }}
+                            {{ form.dexterity }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.agility.id_for_label }}">{{ form.agility.label }}</label>
+                            {{ form.agility.errors }}
+                            {{ form.agility }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.constitution.id_for_label }}">{{ form.constitution.label }}</label>
+                            {{ form.constitution.errors }}
+                            {{ form.constitution }}
+                        </div>
+                        <div>
+                            <label class="heon-text" for="{{ form.strength.id_for_label }}">{{ form.strength.label }}</label>
+                            {{ form.strength.errors }}
+                            {{ form.strength }}
+                        </div>
+                    </div>
+
+                    <div class="helden-form-actions">
+                        <button class="heon-button heon-blue" type="submit">{{ submit_label }}</button>
+                        <a href="{% url 'helden' %}" class="heon-button heon-light-grey">Abbrechen</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3">&nbsp;</div>
+</div>
+{% endblock content %}

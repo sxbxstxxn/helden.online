@@ -6,6 +6,9 @@ from . import views
 urlpatterns = [
 	path('', views.web, name='web'),
 	path('helden/', views.helden, name='helden'),
+	path('helden/anlegen/', views.charakter_anlegen, name='charakter_anlegen'),
+	path('helden/<int:pk>/bearbeiten/', views.charakter_bearbeiten, name='charakter_bearbeiten'),
+	path('helden/<int:pk>/loeschen/', views.charakter_loeschen, name='charakter_loeschen'),
 	path('gruppen/', views.gruppen, name='gruppen'),
 	path('events/', views.events, name='events'),
 	path('news/', views.news, name='news'),

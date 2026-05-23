@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from allauth.account.models import EmailAddress
-from .forms import MeinAccountForm, MessageForm
-from .models import Message
+from .forms import CharacterForm, MeinAccountForm, MessageForm
+from .models import Character, Message
 from .rss import get_rss_news
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,70 @@ def web(request):
 
 @login_required
 def helden(request):
-	return render(request,'helden.html')
+	characters = request.user.characters.filter(deleted_at__isnull=True)
+	return render(request, 'helden.html', {
+		'characters': characters,
+	})
+
+
+@login_required
+def charakter_anlegen(request):
+	if request.method == 'POST':
+		form = CharacterForm(request.POST)
+		if form.is_valid():
+			character = form.save(commit=False)
+			character.owner = request.user
+			character.save()
+			messages.success(request, 'Charakter erfolgreich angelegt.')
+			return redirect('helden')
+	else:
+		form = CharacterForm()
+	return render(request, 'charakter_form.html', {
+		'form': form,
+		'title': 'Charakter anlegen',
+		'submit_label': 'Anlegen',
+	})
+
+
+@login_required
+def charakter_bearbeiten(request, pk):
+	character = get_object_or_404(
+		Character,
+		owner=request.user,
+		deleted_at__isnull=True,
+		pk=pk,
+	)
+	if request.method == 'POST':
+		form = CharacterForm(request.POST, instance=character)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'Charakter erfolgreich gespeichert.')
+			return redirect('helden')
+	else:
+		form = CharacterForm(instance=character)
+	return render(request, 'charakter_form.html', {
+		'form': form,
+		'title': 'Charakter bearbeiten',
+		'submit_label': 'Speichern',
+		'character': character,
+	})
+
+
+@login_required
+def charakter_loeschen(request, pk):
+	character = get_object_or_404(
+		Character,
+		owner=request.user,
+		deleted_at__isnull=True,
+		pk=pk,
+	)
+	if request.method == 'POST':
+		character.mark_deleted()
+		messages.success(request, 'Charakter erfolgreich gel\u00f6scht.')
+		return redirect('helden')
+	return render(request, 'charakter_loeschen.html', {
+		'character': character,
+	})
 
 @login_required
 def gruppen(request):

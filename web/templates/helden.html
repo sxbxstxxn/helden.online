@@ -5,19 +5,59 @@
 
 {% block content %}
 
-<!-- Header -->
-<header class="heon-container heon-text-center" style="padding-top:22px">
-    <h5><b><span class="material-icons md-fw">accessibility</span> Helden</b></h5>
-</header>
-
-<div class="heon-panel" style="padding-top:22px">
-    <div class="heon-col m3 heon-hide-small"> </div>
-    <div class="heon-col m6 s12">
-        <div class="heon-container" style="padding-bottom:16px">
-            <!-- Content coming soon -->
+<div class="heon-row heon-page-row">
+    <div class="heon-col m2 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m8 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <div class="helden-heading">
+                <h2><span class="material-icons md-fw">accessibility</span> Helden</h2>
+                <a href="{% url 'charakter_anlegen' %}" class="heon-button heon-orange">
+                    <span class="material-icons md-fw">add</span> Charakter anlegen
+                </a>
+            </div>
+            <div class="heon-container heon-white heon-padding">
+                {% if characters %}
+                    <div class="helden-list">
+                        {% for character in characters %}
+                            <article class="helden-card">
+                                <div class="helden-card-header">
+                                    <div>
+                                        <h3>{{ character.name }}</h3>
+                                        <p>{{ character.species }} &middot; {{ character.culture }}</p>
+                                    </div>
+                                    <div class="helden-actions">
+                                        <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                                            <span class="material-icons md-fw">edit</span>
+                                        </a>
+                                        <a href="{% url 'charakter_loeschen' character.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                                            <span class="material-icons md-fw">delete</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <dl class="helden-attribute-grid">
+                                    <div><dt>MU</dt><dd>{{ character.courage }}</dd></div>
+                                    <div><dt>KL</dt><dd>{{ character.sagacity }}</dd></div>
+                                    <div><dt>IN</dt><dd>{{ character.intuition }}</dd></div>
+                                    <div><dt>CH</dt><dd>{{ character.charisma }}</dd></div>
+                                    <div><dt>FF</dt><dd>{{ character.dexterity }}</dd></div>
+                                    <div><dt>GE</dt><dd>{{ character.agility }}</dd></div>
+                                    <div><dt>KO</dt><dd>{{ character.constitution }}</dd></div>
+                                    <div><dt>KK</dt><dd>{{ character.strength }}</dd></div>
+                                </dl>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="helden-empty">
+                        <span class="material-icons md-fw heon-xxxlarge">person_add</span>
+                        <p>Du hast noch keine Charaktere angelegt.</p>
+                        <a href="{% url 'charakter_anlegen' %}" class="heon-button heon-orange">Ersten Charakter anlegen</a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <div class="heon-col m3"> </div>
+    <div class="heon-col m2">&nbsp;</div>
 </div>
 
 {% endblock content %}
