@@ -7,12 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Systempakete:
-# - build-essential/pkg-config/default-libmysqlclient-dev für mysqlclient
-# - curl für einfache Container-Diagnose
+# - curl fuer einfache Container-Diagnose
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    pkg-config \
-    default-libmysqlclient-dev \
     curl \
   && rm -rf /var/lib/apt/lists/*
 
