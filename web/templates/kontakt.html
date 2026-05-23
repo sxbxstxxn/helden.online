@@ -15,11 +15,16 @@
                 <p>Schreiben Sie uns Ihre Nachricht. Wir melden uns so schnell wie möglich zurück.</p>
                 {% if sent %}
                     <div class="heon-panel heon-green heon-margin-bottom">Ihre Nachricht wurde erfolgreich versendet.</div>
+                {% elif mail_error %}
+                    <div class="heon-panel heon-red heon-margin-bottom">Die Nachricht konnte nicht versendet werden. Bitte versuchen Sie es spaeter erneut.</div>
                 {% elif form.errors %}
                     <div class="heon-panel heon-red heon-margin-bottom">Bitte überprüfen Sie Ihre Angaben und korrigieren Sie die markierten Felder.</div>
                 {% endif %}
                 <form method="post" class="heon-form">
                     {% csrf_token %}
+                    <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
+                        {{ form.website }}
+                    </div>
                     <div class="heon-row">
                         <div class="heon-col s4" style="padding-top:8px"><label for="id_name"><strong>Name</strong></label></div>
                         <div class="heon-col s8">{{ form.name }}{% if form.name.errors %}<div class="heon-text-red">{{ form.name.errors|striptags }}</div>{% endif %}</div>

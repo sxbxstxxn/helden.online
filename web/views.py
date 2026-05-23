@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -9,11 +11,23 @@ from allauth.account.models import EmailAddress
 from .forms import MeinAccountForm, MessageForm
 from .models import Message
 
+logger = logging.getLogger(__name__)
+
 class ContactForm(forms.Form):
 	name = forms.CharField(label='Name', max_length=100, widget=forms.TextInput(attrs={'class': 'heon-input'}))
 	email = forms.EmailField(label='E-Mail', widget=forms.EmailInput(attrs={'class': 'heon-input'}))
 	subject = forms.CharField(label='Betreff', max_length=150, widget=forms.TextInput(attrs={'class': 'heon-input'}))
 	message = forms.CharField(label='Nachricht', widget=forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}))
+	website = forms.CharField(required=False, widget=forms.TextInput(attrs={
+		'autocomplete': 'off',
+		'class': 'heon-input',
+		'tabindex': '-1',
+	}))
+
+	def clean_website(self):
+		if self.cleaned_data.get('website'):
+			raise forms.ValidationError('Bitte überprüfen Sie Ihre Angaben.')
+		return ''
 
 # Create your views here.
 @login_required
@@ -116,6 +130,7 @@ def example(request):
 
 def kontakt(request):
 	sent = False
+	mail_error = False
 	if request.method == 'POST':
 		form = ContactForm(request.POST)
 		if form.is_valid():
@@ -132,8 +147,12 @@ def kontakt(request):
 				[settings.CONTACT_EMAIL],
 				reply_to=[email],
 			)
-			email_message.send()
-			sent = True
+			try:
+				email_message.send()
+				sent = True
+			except Exception:
+				logger.exception('Contact form email could not be sent.')
+				mail_error = True
 	else:
 		form = ContactForm(initial={
 			'name': request.user.get_full_name() if request.user.is_authenticated else '',
@@ -142,6 +161,7 @@ def kontakt(request):
 	return render(request,'kontakt.html', {
 		'form': form,
 		'sent': sent,
+		'mail_error': mail_error,
 	})
 
 def impressum(request):

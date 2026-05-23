@@ -1,9 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.core.mail.backends.base import BaseEmailBackend
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from smtplib import SMTPException
 
 from .models import Message
+
+
+class FailingEmailBackend(BaseEmailBackend):
+    def send_messages(self, email_messages):
+        raise SMTPException('SMTP unavailable')
 
 
 class LoginRequiredTests(TestCase):
@@ -128,3 +135,29 @@ class ContactFormTests(TestCase):
         self.assertEqual(mail.outbox[0].to, ['kontakt@example.com'])
         self.assertEqual(mail.outbox[0].reply_to, ['ada@example.com'])
         self.assertIn('Kontaktformular: Hallo', mail.outbox[0].subject)
+
+    def test_contact_form_honeypot_blocks_submission(self):
+        response = self.client.post(reverse('kontakt'), {
+            'name': 'Ada Lovelace',
+            'email': 'ada@example.com',
+            'subject': 'Hallo',
+            'message': 'Eine Testnachricht.',
+            'website': 'https://spam.example',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['sent'])
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(EMAIL_BACKEND='web.tests.FailingEmailBackend')
+    def test_contact_form_handles_email_send_failure(self):
+        response = self.client.post(reverse('kontakt'), {
+            'name': 'Ada Lovelace',
+            'email': 'ada@example.com',
+            'subject': 'Hallo',
+            'message': 'Eine Testnachricht.',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['sent'])
+        self.assertTrue(response.context['mail_error'])
