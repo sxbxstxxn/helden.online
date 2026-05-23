@@ -2,15 +2,44 @@
 {% load static %}
 {% block content %}
 
-
 <!-- Header -->
   <header class="heon-container heon-text-center" style="padding-top:22px">
     <h5><b><i class="fa fa-envelopes-bulk fa-fw"></i> Kontakt</b></h5>
   </header>
 
-
-    <div class="heon-container heon-text-center">
-        <p>Kontaktformular einfügen</p>
-
+    <div class="heon-row" style="padding-top:22px">
+        <div class="heon-col m3 heon-hide-small"> </div>
+        <div class="heon-col m6 s12">
+            <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+                <h3>Kontaktaufnahme</h3>
+                <p>Schreiben Sie uns Ihre Nachricht. Wir melden uns so schnell wie möglich zurück.</p>
+                {% if sent %}
+                    <div class="heon-panel heon-green heon-margin-bottom">Ihre Nachricht wurde erfolgreich versendet.</div>
+                {% elif form.errors %}
+                    <div class="heon-panel heon-red heon-margin-bottom">Bitte überprüfen Sie Ihre Angaben und korrigieren Sie die markierten Felder.</div>
+                {% endif %}
+                <form method="post" class="heon-form">
+                    {% csrf_token %}
+                    <div class="heon-row">
+                        <div class="heon-col s4" style="padding-top:8px"><label for="id_name"><strong>Name</strong></label></div>
+                        <div class="heon-col s8">{{ form.name }}{% if form.name.errors %}<div class="heon-text-red">{{ form.name.errors|striptags }}</div>{% endif %}</div>
+                    </div>
+                    <div class="heon-row" style="margin-top:12px">
+                        <div class="heon-col s4" style="padding-top:8px"><label for="id_email"><strong>E-Mail</strong></label></div>
+                        <div class="heon-col s8">{{ form.email }}{% if form.email.errors %}<div class="heon-text-red">{{ form.email.errors|striptags }}</div>{% endif %}</div>
+                    </div>
+                    <div class="heon-row" style="margin-top:12px">
+                        <div class="heon-col s4" style="padding-top:8px"><label for="id_subject"><strong>Betreff</strong></label></div>
+                        <div class="heon-col s8">{{ form.subject }}{% if form.subject.errors %}<div class="heon-text-red">{{ form.subject.errors|striptags }}</div>{% endif %}</div>
+                    </div>
+                    <div class="heon-row" style="margin-top:12px">
+                        <div class="heon-col s4" style="padding-top:8px"><label for="id_message"><strong>Nachricht</strong></label></div>
+                        <div class="heon-col s8">{{ form.message }}{% if form.message.errors %}<div class="heon-text-red">{{ form.message.errors|striptags }}</div>{% endif %}</div>
+                    </div>
+                    <p style="margin-top:20px"><button type="submit" class="heon-button heon-dark-grey">Absenden</button></p>
+                </form>
+            </div>
+        </div>
+        <div class="heon-col m3"> </div>
     </div>
 {% endblock content %}

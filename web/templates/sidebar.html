@@ -18,7 +18,7 @@
         <div class="heon-container">
             <div class="heon-row">
                 <div class="heon-col s4"><a href="#" class="heon-bar-item heon-button" title="Meine Nachrichten"><i class="fa fa-envelope"></i></a></div>
-                <div class="heon-col s4"><a href="#" class="heon-bar-item heon-button" title="Mein Account"><i class="fa fa-user"></i></a></div>
+                <div class="heon-col s4"><a href="{% url 'mein_account' %}" class="heon-bar-item heon-button" title="Mein Account"><i class="fa fa-user"></i></a></div>
                 {% url 'account_logout' as action_url %}
                 {% element form method="post" action=action_url no_visible_fields=True %}
                     {% slot body %}

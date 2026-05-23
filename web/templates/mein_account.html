@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Mein Account{% endblock title %}
+
+{% block content %}
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small"> </div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Mein Account</h2>
+            <p>Willkommen, <strong>{{ user.username }}</strong>.</p>
+            <div class="heon-container heon-white heon-padding">
+                <h3>Benutzerdaten</h3>
+                <p><strong>Benutzername:</strong> {{ user.username }}</p>
+                {% if saved %}
+                    <div class="heon-panel heon-pale-green heon-margin-bottom">Daten erfolgreich gespeichert.</div>
+                {% endif %}
+                <form method="post" class="heon-form">
+                    {% csrf_token %}
+                    <div class="heon-row">
+                        <div class="heon-col s4" style="padding-top:8px">
+                            <label for="id_first_name"><strong>Vorname</strong></label>
+                        </div>
+                        <div class="heon-col s8">
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <span class="heon-text-red">{{ form.first_name.errors|striptags }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="heon-row" style="margin-top:12px">
+                        <div class="heon-col s4" style="padding-top:8px">
+                            <label for="id_last_name"><strong>Nachname</strong></label>
+                        </div>
+                        <div class="heon-col s8">
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <span class="heon-text-red">{{ form.last_name.errors|striptags }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p style="margin-top:16px"><strong>Registriert seit:</strong> {{ user.date_joined }}</p>
+                    <p>
+                        <button type="submit" class="heon-button heon-dark-grey">Speichern</button>
+                    </p>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <div class="heon-col m3"> </div>
+</div>
+{% endblock content %}
