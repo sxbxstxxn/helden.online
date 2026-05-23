@@ -17,7 +17,7 @@
     <div class="heon-col s8 heon-bar heon-center">
         <div class="heon-container">
             <div class="heon-row">
-                <div class="heon-col s4"><a href="#" class="heon-bar-item heon-button" title="Meine Nachrichten"><span class="material-icons md-fw">mail</span></a></div>
+                <div class="heon-col s4"><a href="{% url 'nachrichten' %}" class="heon-bar-item heon-button" title="Meine Nachrichten"><span class="material-icons md-fw">mail</span></a></div>
                 <div class="heon-col s4"><a href="{% url 'mein_account' %}" class="heon-bar-item heon-button" title="Mein Account"><span class="material-icons md-fw">account_circle</span></a></div>
                 {% url 'account_logout' as action_url %}
                 {% element form method="post" action=action_url no_visible_fields=True %}

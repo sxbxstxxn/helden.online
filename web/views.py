@@ -1,10 +1,13 @@
 from django import forms
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.shortcuts import render
+from django.db.models import Q
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from allauth.account.models import EmailAddress
-from .forms import MeinAccountForm
+from .forms import MeinAccountForm, MessageForm
+from .models import Message
 
 class ContactForm(forms.Form):
 	name = forms.CharField(label='Name', max_length=100, widget=forms.TextInput(attrs={'class': 'heon-input'}))
@@ -56,6 +59,48 @@ def mein_account(request):
 		'form': form,
 		'saved': saved,
 	})
+
+@login_required
+def nachrichten(request):
+	inbox = request.user.received_messages.select_related('sender')
+	sent_messages = request.user.sent_messages.select_related('recipient')
+	sent = False
+	if request.method == 'POST':
+		form = MessageForm(request.POST, user=request.user)
+		if form.is_valid():
+			message = form.save(commit=False)
+			message.sender = request.user
+			message.save()
+			sent = True
+			form = MessageForm(user=request.user)
+	else:
+		form = MessageForm(user=request.user)
+	return render(request, 'nachrichten.html', {
+		'inbox': inbox,
+		'sent_messages': sent_messages,
+		'form': form,
+		'sent': sent,
+	})
+
+@login_required
+def nachricht(request, pk):
+	message = get_object_or_404(Message, Q(recipient=request.user) | Q(sender=request.user), pk=pk)
+	if message.recipient == request.user and message.read_at is None:
+		message.read_at = timezone.now()
+		message.save(update_fields=['read_at'])
+	return render(request, 'nachricht.html', {
+		'message': message,
+	})
+
+
+@login_required
+def nachricht_loeschen(request, pk):
+	message = get_object_or_404(Message, Q(recipient=request.user) | Q(sender=request.user), pk=pk)
+	# allow sender or recipient to delete; actual DB delete
+	if request.method == 'POST':
+		message.delete()
+		return redirect('nachrichten')
+	return render(request, 'nachricht_loeschen.html', {'message': message})
 
 def example(request):
 	return render(request,'example.html')

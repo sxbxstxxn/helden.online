@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nachrichten{% endblock title %}
+
+{% block content %}
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small"> </div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Nachrichten</h2>
+            <div class="heon-container heon-white heon-padding">
+                <div class="heon-text-center" style="padding-bottom:16px">
+                    <span class="material-icons md-fw">mail</span>
+                </div>
+
+                <div class="heon-bar heon-margin-bottom" style="display:flex; gap:0.5rem; align-items:center;">
+                    <button class="heon-button heon-white heon-border-right heon-border-grey heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'inbox')">Posteingang</button>
+                    <button class="heon-button heon-white heon-border-right heon-border-grey heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'sent')">Gesendet</button>
+                    <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'compose')" style="margin-left:auto">Neue Nachricht</button>
+                </div>
+
+                <div id="inbox" class="nachrichten-tabcontent">
+                    <h3>Posteingang</h3>
+                    {% if inbox %}
+                        <div class="heon-responsive">
+                            <table class="heon-table heon-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Betreff</th>
+                                        <th>Von</th>
+                                        <th>Datum</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in inbox %}
+                                        <tr class="{% if not message.read_at %}heon-light-grey{% endif %}">
+                                            <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
+                                            <td>{{ message.sender.get_full_name|default:message.sender.username }}</td>
+                                            <td>{{ message.sent_at|date:"d.m.Y H:i" }}</td>
+                                            <td>{% if message.read_at %}Gelesen{% else %}Neu{% endif %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>Keine Nachrichten im Posteingang.</p>
+                    {% endif %}
+                </div>
+
+                <div id="compose" class="nachrichten-tabcontent" style="display:none">
+                    <h3>Neue Nachricht</h3>
+                    {% if sent %}
+                        <div class="heon-panel heon-pale-green heon-border-green heon-padding">Nachricht erfolgreich versendet.</div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <label class="heon-text" for="id_recipient">Empfänger</label>
+                        {{ form.recipient }}
+
+                        <label class="heon-text" for="id_subject">Betreff</label>
+                        {{ form.subject }}
+
+                        <label class="heon-text" for="id_body">Nachricht</label>
+                        {{ form.body }}
+
+                        <button class="heon-button heon-blue heon-margin-top" type="submit">Senden</button>
+                    </form>
+                </div>
+
+                <div id="sent" class="nachrichten-tabcontent" style="display:none">
+                    <h3>Gesendete Nachrichten</h3>
+                    {% if sent_messages %}
+                        <div class="heon-responsive">
+                            <table class="heon-table heon-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Betreff</th>
+                                        <th>An</th>
+                                        <th>Datum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in sent_messages %}
+                                        <tr>
+                                            <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
+                                            <td>{{ message.recipient.get_full_name|default:message.recipient.username }}</td>
+                                            <td>{{ message.sent_at|date:"d.m.Y H:i" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p>Keine gesendeten Nachrichten.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3"> </div>
+</div>
+<script>
+function openNachrichtenTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName('nachrichten-tabcontent');
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none';
+    }
+    tablinks = document.getElementsByClassName('nachrichten-tablink');
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' heon-blue', '');
+    }
+    document.getElementById(tabName).style.display = 'block';
+    evt.currentTarget.className += ' heon-blue';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var firstTab = document.querySelector('.nachrichten-tablink');
+    if (firstTab) {
+        firstTab.click();
+    }
+});
+</script>
+{% endblock content %}

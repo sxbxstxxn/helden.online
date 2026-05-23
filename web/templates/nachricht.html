@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nachricht{% endblock title %}
+
+{% block content %}
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small"> </div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Nachricht</h2>
+            <div class="heon-container heon-white heon-padding">
+                <div class="heon-text-center" style="padding-bottom:16px">
+                    <span class="material-icons md-fw">mail</span>
+                </div>
+                <div style="padding-bottom:16px">
+                    <p><strong>Betreff:</strong> {{ message.subject }}</p>
+                    <p><strong>Von:</strong> {{ message.sender.get_full_name|default:message.sender.username }}</p>
+                    <p><strong>An:</strong> {{ message.recipient.get_full_name|default:message.recipient.username }}</p>
+                    <p><strong>Datum:</strong> {{ message.sent_at|date:"d.m.Y H:i" }}</p>
+                    <p><strong>Status:</strong> {% if message.read_at %}Gelesen{% else %}Neu{% endif %}</p>
+                    <hr>
+                    <p>{{ message.body|linebreaksbr }}</p>
+                </div>
+                <div class="heon-text-center">
+                    <a href="{% url 'nachrichten' %}" class="heon-button heon-light-grey">Zurück zur Nachrichtenübersicht</a>
+                    <a href="{% url 'nachricht_loeschen' message.pk %}" class="heon-button heon-red">Löschen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3"> </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nachricht löschen{% endblock title %}
+
+{% block content %}
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small"> </div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Nachricht löschen</h2>
+            <div class="heon-container heon-white heon-padding">
+                <p>Möchtest du die Nachricht <strong>{{ message.subject }}</strong> wirklich löschen?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="heon-button heon-red" type="submit">Löschen</button>
+                    <a href="{% url 'nachricht' message.pk %}" class="heon-button heon-light-grey">Abbrechen</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3"> </div>
+</div>
+{% endblock content %}
