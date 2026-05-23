@@ -41,6 +41,11 @@ h5 {
   padding: 24px 20px 32px;
 }
 
+.heon-main-sidebar {
+  width: 300px;
+  z-index: 3;
+}
+
 .nachrichten-tabs {
   align-items: center;
   display: flex;
@@ -111,6 +116,10 @@ h5 {
 
   .heon-page-panel {
     padding: 16px 10px 24px;
+  }
+
+  .heon-main-sidebar {
+    width: min(300px, 86vw);
   }
 
   .nachrichten-tabs {
