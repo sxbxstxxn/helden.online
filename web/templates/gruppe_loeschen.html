@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gruppe l&ouml;schen{% endblock title %}
+
+{% block content %}
+<div class="heon-row heon-page-row">
+    <div class="heon-col m3 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <h2>Gruppe l&ouml;schen</h2>
+            <div class="heon-container heon-white heon-padding">
+                <p>M&ouml;chtest du <strong>{{ group.name }}</strong> wirklich l&ouml;schen?</p>
+                <p>Die Gruppe wird ausgeblendet, bleibt aber in der Datenbank erhalten.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="heon-button heon-red" type="submit">L&ouml;schen</button>
+                    <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Abbrechen</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3">&nbsp;</div>
+</div>
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+
+{% block content %}
+<div class="heon-row heon-page-row">
+    <div class="heon-col m3 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <h2>{{ title }}</h2>
+            <div class="heon-container heon-white heon-padding">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name.errors }}
+                    {{ form.name }}
+
+                    <label class="heon-text" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    {{ form.description.errors }}
+                    {{ form.description }}
+
+                    <div class="gruppen-form-actions">
+                        <button class="heon-button heon-blue" type="submit">{{ submit_label }}</button>
+                        <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Abbrechen</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m3">&nbsp;</div>
+</div>
+{% endblock content %}

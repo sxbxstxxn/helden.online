@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from allauth.account.models import EmailAddress
-from .forms import CharacterForm, MeinAccountForm, MessageForm
-from .models import Character, Message
+from .forms import CharacterForm, HeroGroupForm, MeinAccountForm, MessageForm
+from .models import Character, HeroGroup, Message
 from .rss import get_rss_news
 
 logger = logging.getLogger(__name__)
@@ -108,7 +108,70 @@ def charakter_loeschen(request, pk):
 
 @login_required
 def gruppen(request):
-	return render(request,'gruppen.html')
+	groups = request.user.hero_groups.filter(deleted_at__isnull=True)
+	return render(request, 'gruppen.html', {
+		'groups': groups,
+	})
+
+
+@login_required
+def gruppe_anlegen(request):
+	if request.method == 'POST':
+		form = HeroGroupForm(request.POST)
+		if form.is_valid():
+			group = form.save(commit=False)
+			group.owner = request.user
+			group.save()
+			messages.success(request, 'Gruppe erfolgreich angelegt.')
+			return redirect('gruppen')
+	else:
+		form = HeroGroupForm()
+	return render(request, 'gruppe_form.html', {
+		'form': form,
+		'title': 'Gruppe anlegen',
+		'submit_label': 'Anlegen',
+	})
+
+
+@login_required
+def gruppe_bearbeiten(request, pk):
+	group = get_object_or_404(
+		HeroGroup,
+		owner=request.user,
+		deleted_at__isnull=True,
+		pk=pk,
+	)
+	if request.method == 'POST':
+		form = HeroGroupForm(request.POST, instance=group)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'Gruppe erfolgreich gespeichert.')
+			return redirect('gruppen')
+	else:
+		form = HeroGroupForm(instance=group)
+	return render(request, 'gruppe_form.html', {
+		'form': form,
+		'title': 'Gruppe bearbeiten',
+		'submit_label': 'Speichern',
+		'group': group,
+	})
+
+
+@login_required
+def gruppe_loeschen(request, pk):
+	group = get_object_or_404(
+		HeroGroup,
+		owner=request.user,
+		deleted_at__isnull=True,
+		pk=pk,
+	)
+	if request.method == 'POST':
+		group.mark_deleted()
+		messages.success(request, 'Gruppe erfolgreich gel\u00f6scht.')
+		return redirect('gruppen')
+	return render(request, 'gruppe_loeschen.html', {
+		'group': group,
+	})
 
 @login_required
 def events(request):

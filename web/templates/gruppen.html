@@ -5,19 +5,49 @@
 
 {% block content %}
 
-<!-- Header -->
-<header class="heon-container heon-text-center" style="padding-top:22px">
-    <h5><b><span class="material-icons md-fw">family_restroom</span> Gruppen</b></h5>
-</header>
-
-<div class="heon-panel" style="padding-top:22px">
-    <div class="heon-col m3 heon-hide-small"> </div>
-    <div class="heon-col m6 s12">
-        <div class="heon-container" style="padding-bottom:16px">
-            <!-- Content coming soon -->
+<div class="heon-row heon-page-row">
+    <div class="heon-col m2 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m8 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <div class="gruppen-heading">
+                <h2><span class="material-icons md-fw">family_restroom</span> Gruppen</h2>
+                <a href="{% url 'gruppe_anlegen' %}" class="heon-button heon-orange">
+                    <span class="material-icons md-fw">add</span> Gruppe anlegen
+                </a>
+            </div>
+            <div class="heon-container heon-white heon-padding">
+                {% if groups %}
+                    <div class="gruppen-list">
+                        {% for group in groups %}
+                            <article class="gruppen-card">
+                                <div class="gruppen-card-header">
+                                    <div>
+                                        <h3>{{ group.name }}</h3>
+                                        <p>{{ group.description|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="gruppen-actions">
+                                        <a href="{% url 'gruppe_bearbeiten' group.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                                            <span class="material-icons md-fw">edit</span>
+                                        </a>
+                                        <a href="{% url 'gruppe_loeschen' group.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                                            <span class="material-icons md-fw">delete</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="gruppen-empty">
+                        <span class="material-icons md-fw heon-xxxlarge">group_add</span>
+                        <p>Du hast noch keine Gruppen angelegt.</p>
+                        <a href="{% url 'gruppe_anlegen' %}" class="heon-button heon-orange">Erste Gruppe anlegen</a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <div class="heon-col m3"> </div>
+    <div class="heon-col m2">&nbsp;</div>
 </div>
 
 {% endblock content %}

@@ -79,3 +79,27 @@ class Character(models.Model):
         if self.deleted_at is None:
             self.deleted_at = timezone.now()
             self.save(update_fields=['deleted_at', 'updated_at'])
+
+
+class HeroGroup(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='hero_groups',
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=120)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def mark_deleted(self):
+        if self.deleted_at is None:
+            self.deleted_at = timezone.now()
+            self.save(update_fields=['deleted_at', 'updated_at'])

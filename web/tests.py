@@ -7,7 +7,7 @@ from django.urls import reverse
 from smtplib import SMTPException
 from unittest.mock import patch
 
-from .models import Character, Message
+from .models import Character, HeroGroup, Message
 from .rss import get_rss_news
 
 
@@ -28,6 +28,7 @@ class LoginRequiredTests(TestCase):
             reverse('nachrichten'),
             reverse('mein_account'),
             reverse('charakter_anlegen'),
+            reverse('gruppe_anlegen'),
         ]
 
         for url in private_urls:
@@ -154,6 +155,84 @@ class MessageViewTests(TestCase):
         response = self.client.get(reverse('nachricht', args=[self.message.pk]))
 
         self.assertEqual(response.status_code, 404)
+
+
+class HeroGroupViewTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.owner = User.objects.create_user(username='group_owner', password='testpass123')
+        self.outsider = User.objects.create_user(username='group_outsider', password='testpass123')
+        self.group = HeroGroup.objects.create(
+            owner=self.owner,
+            name='Phileassons Erben',
+            description='Eine Reisegruppe.',
+        )
+
+    def group_data(self, **overrides):
+        data = {
+            'name': 'Garether Runde',
+            'description': 'Spielt jeden zweiten Praios.',
+        }
+        data.update(overrides)
+        return data
+
+    def test_user_can_create_group_as_owner(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(reverse('gruppe_anlegen'), self.group_data())
+
+        self.assertRedirects(response, reverse('gruppen'))
+        group = HeroGroup.objects.get(name='Garether Runde')
+        self.assertEqual(group.owner, self.owner)
+        self.assertIsNone(group.deleted_at)
+
+    def test_gruppen_shows_only_own_active_groups(self):
+        HeroGroup.objects.create(
+            owner=self.outsider,
+            name='Fremde Runde',
+            description='Nicht sichtbar.',
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('gruppen'))
+
+        self.assertContains(response, 'Phileassons Erben')
+        self.assertNotContains(response, 'Fremde Runde')
+
+    def test_user_can_edit_own_group(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(
+            reverse('gruppe_bearbeiten', args=[self.group.pk]),
+            self.group_data(name='Phileassons Gefaehrten'),
+        )
+
+        self.assertRedirects(response, reverse('gruppen'))
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, 'Phileassons Gefaehrten')
+
+    def test_outsider_cannot_edit_group(self):
+        self.client.force_login(self.outsider)
+
+        response = self.client.post(
+            reverse('gruppe_bearbeiten', args=[self.group.pk]),
+            self.group_data(name='Uebernommen'),
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, 'Phileassons Erben')
+
+    def test_delete_sets_deleted_flag_without_removing_group(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(reverse('gruppe_loeschen', args=[self.group.pk]))
+
+        self.assertRedirects(response, reverse('gruppen'))
+        self.group.refresh_from_db()
+        self.assertIsNotNone(self.group.deleted_at)
+        self.assertTrue(HeroGroup.objects.filter(pk=self.group.pk).exists())
+        self.assertNotContains(self.client.get(reverse('gruppen')), 'Phileassons Erben')
 
 
 class CharacterViewTests(TestCase):

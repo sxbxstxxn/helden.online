@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import Character, Message
+from .models import Character, HeroGroup, Message
 
 
 class MeinAccountForm(forms.ModelForm):
@@ -77,4 +77,18 @@ class CharacterForm(forms.ModelForm):
             'agility': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
             'constitution': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
             'strength': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
+        }
+
+
+class HeroGroupForm(forms.ModelForm):
+    class Meta:
+        model = HeroGroup
+        fields = ['name', 'description']
+        labels = {
+            'name': 'Name',
+            'description': 'Beschreibung',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'heon-input'}),
+            'description': forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}),
         }

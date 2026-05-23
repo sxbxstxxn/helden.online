@@ -187,6 +187,60 @@ h5 {
   margin-top: 20px;
 }
 
+.gruppen-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.gruppen-heading h2 {
+  margin: 0;
+}
+
+.gruppen-list {
+  display: grid;
+  gap: 16px;
+}
+
+.gruppen-card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.gruppen-card-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.gruppen-card-header h3 {
+  margin: 0;
+}
+
+.gruppen-card-header p {
+  margin: 6px 0 0;
+}
+
+.gruppen-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.gruppen-empty {
+  padding: 24px 12px;
+  text-align: center;
+}
+
+.gruppen-form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
 @media (max-width: 600px) {
   .heon-col.s4.heon-form-row-label,
   .heon-col.s8.heon-form-row-field {
@@ -255,16 +309,21 @@ h5 {
 
   .helden-heading,
   .helden-card-header,
-  .helden-form-actions {
+  .helden-form-actions,
+  .gruppen-heading,
+  .gruppen-card-header,
+  .gruppen-form-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .helden-actions {
+  .helden-actions,
+  .gruppen-actions {
     width: 100%;
   }
 
-  .helden-actions .heon-button {
+  .helden-actions .heon-button,
+  .gruppen-actions .heon-button {
     flex: 1 1 0;
   }
 
