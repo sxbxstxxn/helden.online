@@ -4,19 +4,25 @@
 {% block title %}Impressum{% endblock title %}
 
 {% block content %}
-
-
-<!-- Header -->
-  <header class="heon-container heon-text-center" style="padding-top:22px">
-    <h5><b><span class="material-icons md-fw">description</span> Impressum</b></h5>
-  </header>
-
-
-    <div class="heon-container heon-text-center">
+<div class="heon-row" style="padding-top:22px">
+    <div class="heon-col m3 heon-hide-small"> </div>
+    <div class="heon-col m6 s12">
+        <div class="heon-container heon-grey" style="padding:24px 20px 32px">
+            <h2>Impressum</h2>
+            <div class="heon-container heon-white heon-padding">
+                <div class="heon-text-center" style="padding-bottom:16px">
+                    <span class="material-icons md-fw">privacy_tip</span>
+                </div>
+                <div class="heon-text-center">
         <p>Angaben gem. § 5 TMG:</p>
         <p>Sebastian Christoph<br/>c/o POSTFLEX PFX-796-792<br/>Emsdettener Straße 10<br/>48268 Greven</p>
         <hr/>
         <p>Kontaktaufnahme:</p>
         <p><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a><br/><a href="{% url 'kontakt' %}">Kontaktformular</a></p>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="heon-col m3"> </div>
+</div>
 {% endblock content %}

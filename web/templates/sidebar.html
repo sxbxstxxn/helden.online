@@ -49,8 +49,8 @@
     {% endif %}
     <hr>
     <a href="{% url 'kontakt' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">contact_page</span>  Kontakt</a>
-    <a href="{% url 'impressum' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">description</span>  Impressum</a>
-    <a href="{% url 'datenschutz' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">shield</span>  Datenschutz</a><br><br>
+    <a href="{% url 'impressum' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">privacy_tip</span>  Impressum</a>
+    <a href="{% url 'datenschutz' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">policy</span>  Datenschutz</a><br><br>
     <a href="{% url 'example' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/example' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">question_mark</span>  Beispielseite</a>
   </div>
 
