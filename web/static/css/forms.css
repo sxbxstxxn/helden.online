@@ -1,0 +1,23 @@
+.heon-form-row-label,
+.heon-form-row-field {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .heon-col.s4.heon-form-row-label,
+  .heon-col.s8.heon-form-row-field {
+    float: none;
+    width: 100%;
+  }
+
+  .heon-form-row-label {
+    padding-top: 0 !important;
+  }
+
+  .heon-form-row-field input,
+  .heon-form-row-field select,
+  .heon-form-row-field textarea {
+    display: block;
+    width: 100%;
+  }
+}

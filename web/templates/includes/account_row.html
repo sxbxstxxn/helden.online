@@ -1,8 +1,8 @@
 <div class="heon-row"{% if row_style %} style="{{ row_style }}"{% endif %}>
-    <div class="heon-col s4" style="padding-top:8px">
+    <div class="heon-col s4 heon-form-row-label" style="padding-top:8px">
         <label for="{{ id }}"><strong>{{ label }}</strong></label>
     </div>
-    <div class="heon-col s8">
+    <div class="heon-col s8 heon-form-row-field">
         {% if field %}
             {{ field }}
         {% elif input_type %}
