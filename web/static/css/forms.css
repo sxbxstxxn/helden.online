@@ -1,3 +1,33 @@
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Inter", sans-serif;
+}
+
+.heon-top-message {
+  left: 50%;
+  max-width: min(560px, calc(100vw - 220px));
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 6;
+}
+
+.heon-top-message-item {
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+  font-size: 14px;
+  line-height: 1.25;
+  padding: 7px 14px;
+  text-align: center;
+  white-space: normal;
+}
+
 .heon-form-row-label,
 .heon-form-row-field {
   min-width: 0;
@@ -19,5 +49,21 @@
   .heon-form-row-field textarea {
     display: block;
     width: 100%;
+  }
+
+  .heon-top-message {
+    left: 8px;
+    max-width: calc(100vw - 16px);
+    top: 59px;
+    transform: none;
+    width: calc(100vw - 16px);
+  }
+
+  .heon-top-message-item {
+    padding: 9px 12px;
+  }
+
+  .heon-main-with-message {
+    padding-top: 48px;
   }
 }
