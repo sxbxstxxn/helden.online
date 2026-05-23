@@ -27,6 +27,26 @@ def web(request):
 	return render(request,'web.html')
 
 @login_required
+def helden(request):
+	return render(request,'helden.html')
+
+@login_required
+def gruppen(request):
+	return render(request,'gruppen.html')
+
+@login_required
+def events(request):
+	return render(request,'events.html')
+
+@login_required
+def news(request):
+	return render(request,'news.html')
+
+@login_required
+def forum(request):
+	return render(request,'forum.html')
+
+@login_required
 def mein_account(request):
 	email_addresses = EmailAddress.objects.filter(user=request.user)
 	if request.method == 'POST':
