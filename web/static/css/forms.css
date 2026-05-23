@@ -33,6 +33,16 @@ h5 {
   min-width: 0;
 }
 
+.nachrichten-tabs {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nachrichten-compose-tab {
+  margin-left: auto;
+}
+
 @media (max-width: 600px) {
   .heon-col.s4.heon-form-row-label,
   .heon-col.s8.heon-form-row-field {
@@ -65,5 +75,17 @@ h5 {
 
   .heon-main-with-message {
     padding-top: 48px;
+  }
+
+  .nachrichten-tabs {
+    flex-wrap: wrap;
+  }
+
+  .nachrichten-compose-tab {
+    margin-left: 0;
+  }
+
+  .nachrichten-tablink {
+    flex: 1 1 calc(50% - 0.5rem);
   }
 }
