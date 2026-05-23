@@ -40,18 +40,18 @@
     <a href="#" class="heon-bar-item heon-button heon-padding-16 heon-hide-large heon-dark-grey heon-hover-black" onclick="w3_close()" title="close menu"><span class="material-icons md-fw">close</span>  Close Menu</a>
     <a href="{% url 'web' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">home</span>  Startseite</a>
     {% if request.user.is_authenticated %}
-        <a href="{% url 'helden' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/helden' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">accessibility</span>  Helden</a>
-        <a href="{% url 'gruppen' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/gruppen' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">family_restroom</span>  Gruppen</a>
-        <a href="{% url 'events' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/events' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">calendar_month</span>  Events</a>
+        <a href="{% url 'helden' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/helden/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">accessibility</span>  Helden</a>
+        <a href="{% url 'gruppen' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/gruppen/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">family_restroom</span>  Gruppen</a>
+        <a href="{% url 'events' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/events/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">calendar_month</span>  Events</a>
         <hr>
-        <a href="{% url 'news' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/news' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">newspaper</span>  News</a>
-        <a href="{% url 'forum' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/forum' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">forum</span>  Forum</a>
+        <a href="{% url 'news' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/news/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">newspaper</span>  News</a>
+        <a href="{% url 'forum' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/forum/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">forum</span>  Forum</a>
     {% endif %}
     <hr>
     <a href="{% url 'kontakt' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">contact_page</span>  Kontakt</a>
     <a href="{% url 'impressum' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">privacy_tip</span>  Impressum</a>
     <a href="{% url 'datenschutz' %}" class="heon-bar-item heon-button heon-padding"><span class="material-icons md-fw">policy</span>  Datenschutz</a><br><br>
-    <a href="{% url 'example' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/example' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">question_mark</span>  Beispielseite</a>
+    <a href="{% url 'example' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/example/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">question_mark</span>  Beispielseite</a>
   </div>
 
   <!-- Footer -->
