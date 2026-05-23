@@ -33,6 +33,14 @@ h5 {
   min-width: 0;
 }
 
+.heon-page-row {
+  padding-top: 22px;
+}
+
+.heon-page-panel {
+  padding: 24px 20px 32px;
+}
+
 .nachrichten-tabs {
   align-items: center;
   display: flex;
@@ -75,6 +83,14 @@ h5 {
 
   .heon-main-with-message {
     padding-top: 48px;
+  }
+
+  .heon-page-row {
+    padding-top: 14px;
+  }
+
+  .heon-page-panel {
+    padding: 16px 10px 24px;
   }
 
   .nachrichten-tabs {
