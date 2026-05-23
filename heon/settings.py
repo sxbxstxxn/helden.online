@@ -51,6 +51,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'heon.context_processors.contact_email',
+                'heon.context_processors.unread_messages',
             ],
         },
     },

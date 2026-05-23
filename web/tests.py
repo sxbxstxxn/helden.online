@@ -156,6 +156,35 @@ class MessageViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_sidebar_shows_unread_message_count(self):
+        Message.objects.create(
+            sender=self.outsider,
+            recipient=self.recipient,
+            subject='Zweite Nachricht',
+            body='Hallo nochmal',
+        )
+        self.client.force_login(self.recipient)
+
+        response = self.client.get(reverse('web'))
+
+        self.assertContains(response, 'class="heon-icon-badge"')
+        self.assertContains(response, '>2</span>', html=False)
+
+    def test_sidebar_ignores_read_and_deleted_messages(self):
+        self.message.mark_as_read()
+        Message.objects.create(
+            sender=self.outsider,
+            recipient=self.recipient,
+            subject='Geloeschte Nachricht',
+            body='Nicht anzeigen',
+            deleted_by_recipient=True,
+        )
+        self.client.force_login(self.recipient)
+
+        response = self.client.get(reverse('web'))
+
+        self.assertNotContains(response, 'class="heon-icon-badge"')
+
 
 class HeroGroupViewTests(TestCase):
     def setUp(self):
