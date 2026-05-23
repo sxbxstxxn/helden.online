@@ -13,9 +13,6 @@
             <div class="heon-container heon-white heon-padding">
                 <h3>Benutzerdaten</h3>
                 {% include 'includes/account_row.html' with id='id_username' label='Benutzername' input_type='text' value=user.username %}
-                {% if saved %}
-                    <div class="heon-panel heon-pale-green heon-margin-bottom">Daten erfolgreich gespeichert.</div>
-                {% endif %}
                 <form method="post" class="heon-form">
                     {% csrf_token %}
                     {% include 'includes/account_row.html' with id='id_first_name' label='Vorname' field=form.first_name error=form.first_name.errors %}

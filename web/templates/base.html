@@ -21,6 +21,29 @@
 
     <style>
     html,body,h1,h2,h3,h4,h5 {font-family: "Inter", sans-serif}
+    .heon-top-message {
+      left: 50%;
+      max-width: min(560px, calc(100vw - 220px));
+      position: absolute;
+      top: 6px;
+      transform: translateX(-50%);
+      width: max-content;
+      z-index: 5;
+    }
+    .heon-top-message-item {
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+      font-size: 14px;
+      line-height: 1.25;
+      padding: 7px 14px;
+      text-align: center;
+      white-space: normal;
+    }
+    @media (max-width: 600px) {
+      .heon-top-message {
+        max-width: calc(100vw - 96px);
+      }
+    }
     </style>
 
 </head>
@@ -29,6 +52,15 @@
 <!-- Top container -->
 <div class="heon-bar heon-top heon-dark-grey heon-large" style="z-index:4">
   <button class="heon-bar-item heon-button heon-hide-large heon-hover-none heon-hover-text-light-grey" onclick="heon_open();"><span class="material-icons md-fw">menu</span>  Menu</button>
+  {% if messages %}
+    <div class="heon-top-message">
+      {% for message in messages %}
+        <div class="heon-top-message-item {% if message.tags == 'success' %}heon-green{% elif message.tags == 'error' %}heon-red{% else %}heon-grey{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
   <span class="heon-bar-item heon-right"><img src="{% static 'images/heon_logo.png' %}" width="30px">Helden ONLINE</span>
 </div>
 

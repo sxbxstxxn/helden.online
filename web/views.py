@@ -6,6 +6,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.utils import timezone
 from allauth.account.models import EmailAddress
 from .forms import MeinAccountForm, MessageForm
@@ -65,17 +66,16 @@ def mein_account(request):
 		form = MeinAccountForm(request.POST, instance=request.user)
 		if form.is_valid():
 			form.save()
-			saved = True
+			messages.success(request, 'Daten erfolgreich gespeichert.')
+			return redirect('mein_account')
 		else:
-			saved = False
+			pass
 	else:
 		form = MeinAccountForm(instance=request.user)
-		saved = False
 	return render(request, 'mein_account.html', {
 		'user': request.user,
 		'email_addresses': email_addresses,
 		'form': form,
-		'saved': saved,
 	})
 
 @login_required

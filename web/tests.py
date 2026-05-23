@@ -94,6 +94,22 @@ class RssNewsTests(TestCase):
         self.assertContains(response, 'data-feed="testfeed"')
 
 
+class AccountTests(TestCase):
+    def test_account_save_redirects_and_shows_success_message(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='accountuser', password='testpass123')
+        self.client.force_login(user)
+
+        response = self.client.post(reverse('mein_account'), {
+            'first_name': 'Ada',
+            'last_name': 'Lovelace',
+        }, follow=True)
+
+        self.assertRedirects(response, reverse('mein_account'))
+        self.assertContains(response, 'Daten erfolgreich gespeichert.')
+        self.assertContains(response, 'heon-top-message-item')
+
+
 class MessageViewTests(TestCase):
     def setUp(self):
         User = get_user_model()
