@@ -12,7 +12,7 @@
             <p>Willkommen, <strong>{{ user.username }}</strong>.</p>
             <div class="heon-container heon-white heon-padding">
                 <h3>Benutzerdaten</h3>
-                {% include 'includes/account_row.html' with id='id_username' label='Benutzername' field='<input type="text" id="id_username" class="heon-input" value="'|add:user.username|add:'" disabled />' %}
+                {% include 'includes/account_row.html' with id='id_username' label='Benutzername' input_type='text' value=user.username %}
                 {% if saved %}
                     <div class="heon-panel heon-pale-green heon-margin-bottom">Daten erfolgreich gespeichert.</div>
                 {% endif %}
@@ -21,13 +21,13 @@
                     {% include 'includes/account_row.html' with id='id_first_name' label='Vorname' field=form.first_name error=form.first_name.errors %}
                     {% include 'includes/account_row.html' with id='id_last_name' label='Nachname' field=form.last_name error=form.last_name.errors row_style='margin-top:12px' %}
                     {% if email_addresses and email_addresses|length > 0 %}
-                        {% include 'includes/account_row.html' with id='id_email' label='E-Mail-Adresse' field='<input type="email" id="id_email" class="heon-input" value="'|add:email_addresses.0.email|add:'" disabled />' %}
+                        {% include 'includes/account_row.html' with id='id_email' label='E-Mail-Adresse' input_type='email' value=email_addresses.0.email %}
                         {% if email_addresses.0.verified %}<span class="heon-text-green"> (verifiziert)</span>{% endif %}
                     {% else %}
-                        {% include 'includes/account_row.html' with id='id_email' label='E-Mail-Adresse' field='<input type="email" id="id_email" class="heon-input" value="'|add:user.email|add:'" disabled />' %}
+                        {% include 'includes/account_row.html' with id='id_email' label='E-Mail-Adresse' input_type='email' value=user.email %}
                     {% endif %}
                     {% with joined=user.date_joined|date:"SHORT_DATETIME_FORMAT" %}
-                        {% include 'includes/account_row.html' with id='id_date_joined' label='Registriert seit' field='<input type="text" id="id_date_joined" class="heon-input" value="'|add:joined|add:'" disabled />' row_style='margin-top:16px' %}
+                        {% include 'includes/account_row.html' with id='id_date_joined' label='Registriert seit' input_type='text' value=joined row_style='margin-top:16px' %}
                     {% endwith %}
                     <p>
                         <button type="submit" class="heon-button heon-dark-grey">Speichern</button>

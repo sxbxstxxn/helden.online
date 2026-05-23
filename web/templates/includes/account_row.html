@@ -3,7 +3,11 @@
         <label for="{{ id }}"><strong>{{ label }}</strong></label>
     </div>
     <div class="heon-col s8">
-        {{ field|safe }}
+        {% if field %}
+            {{ field }}
+        {% elif input_type %}
+            <input type="{{ input_type }}" id="{{ id }}" class="heon-input" value="{{ value }}" disabled />
+        {% endif %}
         {% if error %}
             <span class="heon-text-red">{{ error|striptags }}</span>
         {% endif %}
