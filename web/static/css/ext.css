@@ -190,6 +190,15 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .heon-green,.heon-hover-green:hover{color:var(--heon-greydark)!important;background-color:var(--heon-green)!important}
 .heon-blue,.heon-hover-blue:hover{color:var(--heon-greylight)!important;background-color:var(--heon-blue)!important}
 
+.material-icons{font-family:'Material Icons';font-weight:normal;font-style:normal;font-size:inherit;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;vertical-align:middle}
+.material-icons.md-fw{width:1.25em;text-align:center;}
+.material-icons.heon-small{font-size:1rem!important}
+.material-icons.heon-medium{font-size:1.25rem!important}
+.material-icons.heon-large{font-size:1.5rem!important}
+.material-icons.heon-xlarge{font-size:2rem!important}
+.material-icons.heon-xxlarge{font-size:2.5rem!important}
+.material-icons.heon-xxxlarge{font-size:3rem!important}
+
 .heon-text-white,.heon-hover-text-white:hover{color:#fff!important}
 .heon-text-black,.heon-hover-text-black:hover{color:#000!important}
 .heon-text-grey,.heon-hover-text-grey:hover,.heon-text-gray,.heon-hover-text-gray:hover{color:var(--heon-grey)!important}
