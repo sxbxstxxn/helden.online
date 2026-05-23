@@ -36,7 +36,7 @@
   <hr>
   {% endif %}
 
-  <div class="heon-bar-block">
+  <div class="heon-bar-block heon-sidebar-nav">
     <a href="#" class="heon-bar-item heon-button heon-padding-16 heon-hide-large heon-dark-grey heon-hover-black" onclick="w3_close()" title="close menu"><span class="material-icons md-fw">close</span>  Close Menu</a>
     <a href="{% url 'web' %}" class="heon-bar-item heon-button heon-padding {% if request.path == '/' %}heon-light-grey{% endif %}"><span class="material-icons md-fw">home</span>  Startseite</a>
     {% if request.user.is_authenticated %}
@@ -55,7 +55,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="heon-container heon-padding-16 heon-dark-grey heon-hide-small heon-tiny">
+  <footer class="heon-container heon-padding-16 heon-dark-grey heon-hide-small heon-tiny heon-sidebar-footer">
     <p>Backend by <a href="https://www.djangoproject.com/" target="_blank" title="Django">Django</a> and <a href="https://www.python.org/" target="_blank" title="Python">Python</a></p>
     <p><p>Template by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" title="w3.css">w3.css</a></p></p>
     <p>Developed by Sebastian Christoph</p>
