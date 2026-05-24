@@ -1,3 +1,5 @@
+import base64
+
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.cache import cache
@@ -11,9 +13,46 @@ from .models import Character, HeroGroup, Message
 from .rss import get_rss_news
 
 
+def basic_auth(username, password):
+    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
+    return f'Basic {credentials}'
+
+
 class FailingEmailBackend(BaseEmailBackend):
     def send_messages(self, email_messages):
         raise SMTPException('SMTP unavailable')
+
+
+class SitePasswordMiddlewareTests(TestCase):
+    @override_settings(SITE_PASSWORD_ENABLED=False)
+    def test_site_password_is_disabled_by_default(self):
+        response = self.client.get(reverse('kontakt'))
+
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(
+        SITE_PASSWORD_ENABLED=True,
+        SITE_PASSWORD_USERNAME='held',
+        SITE_PASSWORD='geheim',
+    )
+    def test_site_password_blocks_requests_without_valid_credentials(self):
+        response = self.client.get(reverse('kontakt'))
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response['WWW-Authenticate'], 'Basic realm="Helden Online"')
+
+    @override_settings(
+        SITE_PASSWORD_ENABLED=True,
+        SITE_PASSWORD_USERNAME='held',
+        SITE_PASSWORD='geheim',
+    )
+    def test_site_password_allows_valid_credentials(self):
+        response = self.client.get(
+            reverse('kontakt'),
+            HTTP_AUTHORIZATION=basic_auth('held', 'geheim'),
+        )
+
+        self.assertEqual(response.status_code, 200)
 
 
 class LoginRequiredTests(TestCase):
