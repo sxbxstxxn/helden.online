@@ -10,9 +10,6 @@
         <div class="heon-container heon-grey heon-page-panel">
             <h2 class="heon-page-heading">Nachricht</h2>
             <div class="heon-container heon-white heon-padding">
-                <div class="heon-text-center" style="padding-bottom:16px">
-                    <span class="material-icons md-fw">mail</span>
-                </div>
                 <div style="padding-bottom:16px">
                     <p><strong>Betreff:</strong> {{ message.subject }}</p>
                     <p><strong>Von:</strong> {{ message.sender.get_full_name|default:message.sender.username }}</p>

@@ -128,8 +128,25 @@ h5 {
   gap: 0.5rem;
 }
 
-.nachrichten-compose-tab {
-  margin-left: auto;
+.nachrichten-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.nachrichten-heading h2 {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.nachrichten-heading-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  margin: 0;
+  min-width: 0;
+  width: auto;
 }
 
 .nachrichten-card-list {
@@ -682,6 +699,11 @@ h5 {
     flex: 1 1 calc(50% - 0.5rem);
   }
 
+  .nachrichten-heading-tabs {
+    justify-content: stretch;
+    width: 100%;
+  }
+
   .nachrichten-table-view {
     display: none;
   }
@@ -693,6 +715,7 @@ h5 {
   .helden-heading,
   .helden-card-header,
   .helden-form-actions,
+  .nachrichten-heading,
   .gruppen-participant-meta,
   .gruppen-heading,
   .gruppen-card-header,

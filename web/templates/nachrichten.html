@@ -8,18 +8,17 @@
     <div class="heon-col m2 heon-hide-small"> </div>
     <div class="heon-col m8 s12">
         <div class="heon-container heon-grey heon-page-panel">
-            <h2 class="heon-page-heading">Nachrichten</h2>
-            <div class="heon-container heon-white heon-padding">
-                <div class="heon-text-center" style="padding-bottom:16px">
-                    <span class="material-icons md-fw">mail</span>
-                </div>
-
-                <div class="heon-bar heon-margin-bottom nachrichten-tabs">
+            <div class="nachrichten-heading heon-page-heading">
+                <h2><span class="material-icons md-fw">mail</span> Nachrichten</h2>
+                <div class="heon-bar nachrichten-tabs nachrichten-heading-tabs">
                     <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'inbox')">Posteingang</button>
                     <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink" onclick="openNachrichtenTab(event, 'sent')">Gesendet</button>
-                    <button class="heon-button heon-white heon-hover-light-grey nachrichten-tablink nachrichten-compose-tab" onclick="openNachrichtenTab(event, 'compose')">Neue Nachricht</button>
                 </div>
-
+                <button class="heon-button heon-orange nachrichten-compose-heading-button" onclick="openNachrichtenTab(event, 'compose')" title="Neue Nachricht">
+                    <span class="material-icons md-fw">add</span> Neue Nachricht
+                </button>
+            </div>
+            <div class="heon-container heon-white heon-padding">
                 <div id="inbox" class="nachrichten-tabcontent">
                     <h3>Posteingang</h3>
                     {% if inbox %}
