@@ -611,6 +611,16 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, 'Alrik')
         self.assertNotContains(response, 'Fremder Held')
 
+    def test_helden_renders_characters_as_single_open_accordion(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('helden'))
+
+        self.assertContains(response, 'class="helden-card character-accordion"')
+        self.assertContains(response, '<summary>', html=False)
+        self.assertContains(response, '<dt>MU</dt>', html=False)
+        self.assertContains(response, 'characters[j].open = false')
+
     def test_helden_shows_active_group_for_character(self):
         group_owner = get_user_model().objects.create_user(username='group_owner_for_character', password='testpass123')
         group = HeroGroup.objects.create(
@@ -628,6 +638,48 @@ class CharacterViewTests(TestCase):
         response = self.client.get(reverse('helden'))
 
         self.assertContains(response, 'Aktiv in: Siebenwind Runde')
+        self.assertContains(response, 'class="helden-summary-groups"')
+        self.assertContains(response, 'helden-summary-group-active')
+        self.assertContains(response, 'Siebenwind Runde')
+
+    def test_helden_shows_badge_for_each_active_group(self):
+        User = get_user_model()
+        first_group_owner = User.objects.create_user(username='first_group_owner', password='testpass123')
+        second_group_owner = User.objects.create_user(username='second_group_owner', password='testpass123')
+        first_group = HeroGroup.objects.create(
+            owner=first_group_owner,
+            name='Erste Runde',
+            description='Aktive Gruppe.',
+        )
+        second_group = HeroGroup.objects.create(
+            owner=second_group_owner,
+            name='Zweite Runde',
+            description='Aktive Gruppe.',
+        )
+        first_participation = HeroGroupParticipant.objects.create(
+            group=first_group,
+            user=self.owner,
+            character=self.character,
+        )
+        second_participation = HeroGroupParticipant.objects.create(
+            group=second_group,
+            user=self.owner,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('helden'))
+
+        self.assertContains(response, 'Erste Runde')
+        self.assertContains(response, 'Zweite Runde')
+        self.assertContains(
+            response,
+            reverse('charakter_gruppe_verlassen', args=[self.character.pk, first_participation.pk]),
+        )
+        self.assertContains(
+            response,
+            reverse('charakter_gruppe_verlassen', args=[self.character.pk, second_participation.pk]),
+        )
 
     def test_character_owner_can_leave_group_and_group_owner_gets_message(self):
         group_owner = get_user_model().objects.create_user(username='group_owner_for_leave', password='testpass123')
@@ -643,11 +695,11 @@ class CharacterViewTests(TestCase):
         )
         self.client.force_login(self.owner)
 
-        confirm_response = self.client.get(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+        confirm_response = self.client.get(reverse('charakter_gruppe_verlassen', args=[self.character.pk, participation.pk]))
         self.assertContains(confirm_response, 'Gruppe verlassen')
         self.assertTrue(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
 
-        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk, participation.pk]))
 
         self.assertRedirects(response, reverse('helden'))
         self.assertFalse(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
@@ -669,7 +721,7 @@ class CharacterViewTests(TestCase):
         )
         self.client.force_login(self.outsider)
 
-        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk, participation.pk]))
 
         self.assertEqual(response.status_code, 404)
         self.assertTrue(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())

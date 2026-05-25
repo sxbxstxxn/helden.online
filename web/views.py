@@ -120,15 +120,16 @@ def charakter_loeschen(request, pk):
 
 
 @login_required
-def charakter_gruppe_verlassen(request, pk):
+def charakter_gruppe_verlassen(request, character_pk, participant_pk):
 	character = get_object_or_404(
 		Character,
 		owner=request.user,
 		deleted_at__isnull=True,
-		pk=pk,
+		pk=character_pk,
 	)
 	participant = get_object_or_404(
 		HeroGroupParticipant.objects.select_related('group__owner', 'character'),
+		pk=participant_pk,
 		character=character,
 		user=request.user,
 		group__deleted_at__isnull=True,

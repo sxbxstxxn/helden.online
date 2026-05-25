@@ -19,30 +19,42 @@
                 {% if characters %}
                     <div class="helden-list">
                         {% for character in characters %}
-                            <article class="helden-card">
-                                <div class="helden-card-header">
-                                    <div>
-                                        <h3>{{ character.name }}</h3>
-                                        <p>{{ character.species }} &middot; {{ character.culture }}</p>
+                            <details class="helden-card character-accordion">
+                                <summary>
+                                    <span>
+                                        <strong>{{ character.name }}</strong>
+                                        <small>{{ character.species }} &middot; {{ character.culture }}</small>
+                                    </span>
+                                    <span class="helden-summary-groups">
                                         {% if character.active_group_participations %}
                                             {% for participation in character.active_group_participations %}
-                                                <p class="helden-group-status">
-                                                    <span class="material-icons md-fw">family_restroom</span>
-                                                    Aktiv in: {{ participation.group.name }}
-                                                </p>
-                                                <p>
-                                                    <a href="{% url 'charakter_gruppe_verlassen' character.pk %}" class="heon-button heon-red helden-group-leave">
-                                                        <span class="material-icons md-fw">logout</span> Gruppe verlassen
-                                                    </a>
-                                                </p>
+                                                <span class="helden-summary-group helden-summary-group-active">{{ participation.group.name }}</span>
                                             {% endfor %}
                                         {% else %}
+                                            <span class="helden-summary-group helden-summary-group-empty">Keine Gruppe</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="material-icons md-fw">expand_more</span>
+                                </summary>
+                                <div class="helden-card-details">
+                                    {% if character.active_group_participations %}
+                                        {% for participation in character.active_group_participations %}
                                             <p class="helden-group-status">
                                                 <span class="material-icons md-fw">family_restroom</span>
-                                                In keiner Gruppe aktiv
+                                                Aktiv in: {{ participation.group.name }}
                                             </p>
-                                        {% endif %}
-                                    </div>
+                                            <p>
+                                                <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave">
+                                                    <span class="material-icons md-fw">logout</span> Gruppe verlassen: {{ participation.group.name }}
+                                                </a>
+                                            </p>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="helden-group-status">
+                                            <span class="material-icons md-fw">family_restroom</span>
+                                            In keiner Gruppe aktiv
+                                        </p>
+                                    {% endif %}
                                     <div class="helden-actions">
                                         <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
                                             <span class="material-icons md-fw">edit</span>
@@ -51,18 +63,18 @@
                                             <span class="material-icons md-fw">delete</span>
                                         </a>
                                     </div>
+                                    <dl class="helden-attribute-grid">
+                                        <div><dt>MU</dt><dd>{{ character.courage }}</dd></div>
+                                        <div><dt>KL</dt><dd>{{ character.sagacity }}</dd></div>
+                                        <div><dt>IN</dt><dd>{{ character.intuition }}</dd></div>
+                                        <div><dt>CH</dt><dd>{{ character.charisma }}</dd></div>
+                                        <div><dt>FF</dt><dd>{{ character.dexterity }}</dd></div>
+                                        <div><dt>GE</dt><dd>{{ character.agility }}</dd></div>
+                                        <div><dt>KO</dt><dd>{{ character.constitution }}</dd></div>
+                                        <div><dt>KK</dt><dd>{{ character.strength }}</dd></div>
+                                    </dl>
                                 </div>
-                                <dl class="helden-attribute-grid">
-                                    <div><dt>MU</dt><dd>{{ character.courage }}</dd></div>
-                                    <div><dt>KL</dt><dd>{{ character.sagacity }}</dd></div>
-                                    <div><dt>IN</dt><dd>{{ character.intuition }}</dd></div>
-                                    <div><dt>CH</dt><dd>{{ character.charisma }}</dd></div>
-                                    <div><dt>FF</dt><dd>{{ character.dexterity }}</dd></div>
-                                    <div><dt>GE</dt><dd>{{ character.agility }}</dd></div>
-                                    <div><dt>KO</dt><dd>{{ character.constitution }}</dd></div>
-                                    <div><dt>KK</dt><dd>{{ character.strength }}</dd></div>
-                                </dl>
-                            </article>
+                            </details>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -78,4 +90,22 @@
     <div class="heon-col m2">&nbsp;</div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var characters = document.getElementsByClassName('character-accordion');
+
+    for (var i = 0; i < characters.length; i++) {
+        characters[i].addEventListener('toggle', function() {
+            if (!this.open) {
+                return;
+            }
+            for (var j = 0; j < characters.length; j++) {
+                if (characters[j] !== this) {
+                    characters[j].open = false;
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock content %}

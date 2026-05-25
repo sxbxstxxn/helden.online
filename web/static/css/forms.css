@@ -135,7 +135,82 @@ h5 {
 .helden-card {
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 16px;
+}
+
+.helden-card summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 220px) auto;
+  gap: 12px;
+  list-style: none;
+  min-height: 58px;
+  padding: 10px 12px;
+}
+
+.helden-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.helden-card summary span:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.helden-summary-groups {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-self: stretch;
+  min-width: 0;
+}
+
+.helden-summary-group {
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  color: #505050;
+  flex: 0 1 auto;
+  font-size: 13px;
+  line-height: 1.2;
+  max-width: 100%;
+  min-width: max-content;
+  overflow: hidden;
+  padding: 5px 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.helden-summary-group-active {
+  background: var(--heon-orangelight);
+  border-color: var(--heon-orangelight);
+}
+
+.helden-summary-group-empty {
+  background: #f3f3f3;
+}
+
+.helden-card summary strong,
+.helden-card summary small {
+  overflow-wrap: anywhere;
+}
+
+.helden-card summary small {
+  color: #505050;
+}
+
+.helden-card[open] summary {
+  border-bottom: 1px solid #ddd;
+}
+
+.helden-card[open] summary .material-icons {
+  transform: rotate(180deg);
+}
+
+.helden-card-details {
+  padding: 12px;
 }
 
 .helden-card-header {
@@ -172,6 +247,7 @@ h5 {
   display: flex;
   flex: 0 0 auto;
   gap: 8px;
+  margin-top: 12px;
 }
 
 .helden-attribute-grid {
@@ -417,6 +493,26 @@ h5 {
   .gruppen-form-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .helden-card summary {
+    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .helden-summary-groups {
+    grid-column: 1 / -1;
+    justify-self: start;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .helden-summary-group {
+    flex: 0 1 auto;
+  }
+
+  .helden-card summary > .material-icons {
+    justify-self: end;
   }
 
   .helden-actions,
