@@ -152,6 +152,41 @@ h5 {
   margin-top: 3px;
 }
 
+.nachrichten-clickable-row {
+  cursor: pointer;
+}
+
+.nachrichten-clickable-row:hover {
+  background: #f7f7f7;
+}
+
+.nachrichten-clickable-row:focus {
+  outline: 2px solid var(--heon-orange);
+  outline-offset: -2px;
+}
+
+.nachrichten-clickable-row a {
+  text-decoration: none;
+}
+
+.heon-table th.nachrichten-date,
+.heon-table td.nachrichten-date {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nachrichten-card-date {
+  text-align: right;
+}
+
+.nachrichten-unread {
+  font-weight: 700;
+}
+
+.nachrichten-unread a {
+  font-weight: 700;
+}
+
 .helden-heading {
   align-items: center;
   display: flex;

@@ -29,17 +29,15 @@
                                     <tr>
                                         <th>Betreff</th>
                                         <th>Von</th>
-                                        <th>Datum</th>
-                                        <th>Status</th>
+                                        <th class="nachrichten-date">Datum</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for message in inbox %}
-                                        <tr class="{% if not message.read_at %}heon-light-grey{% endif %}">
+                                        <tr class="nachrichten-clickable-row {% if not message.read_at %}nachrichten-unread{% endif %}" tabindex="0" onclick="window.location.href='{% url 'nachricht' message.pk %}'" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href='{% url 'nachricht' message.pk %}'; }">
                                             <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
                                             <td>{{ message.sender.get_full_name|default:message.sender.username }}</td>
-                                            <td>{{ message.sent_at|date:"d.m.Y H:i" }}</td>
-                                            <td>{% if message.read_at %}Gelesen{% else %}Neu{% endif %}</td>
+                                            <td class="nachrichten-date">{{ message.sent_at|date:"d.m.Y H:i" }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -47,10 +45,10 @@
                         </div>
                         <div class="nachrichten-card-list">
                             {% for message in inbox %}
-                                <a href="{% url 'nachricht' message.pk %}" class="nachrichten-card {% if not message.read_at %}heon-light-grey{% endif %}">
+                                <a href="{% url 'nachricht' message.pk %}" class="nachrichten-card {% if not message.read_at %}nachrichten-unread{% endif %}">
                                     <strong>{{ message.subject }}</strong>
                                     <span>Von: {{ message.sender.get_full_name|default:message.sender.username }}</span>
-                                    <span>{{ message.sent_at|date:"d.m.Y H:i" }} · {% if message.read_at %}Gelesen{% else %}Neu{% endif %}</span>
+                                    <span class="nachrichten-card-date">{{ message.sent_at|date:"d.m.Y H:i" }}</span>
                                 </a>
                             {% endfor %}
                         </div>
@@ -88,7 +86,7 @@
                                     <tr>
                                         <th>Betreff</th>
                                         <th>An</th>
-                                        <th>Datum</th>
+                                        <th class="nachrichten-date">Datum</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -96,7 +94,7 @@
                                         <tr>
                                             <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
                                             <td>{{ message.recipient.get_full_name|default:message.recipient.username }}</td>
-                                            <td>{{ message.sent_at|date:"d.m.Y H:i" }}</td>
+                                            <td class="nachrichten-date">{{ message.sent_at|date:"d.m.Y H:i" }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -107,7 +105,7 @@
                                 <a href="{% url 'nachricht' message.pk %}" class="nachrichten-card">
                                     <strong>{{ message.subject }}</strong>
                                     <span>An: {{ message.recipient.get_full_name|default:message.recipient.username }}</span>
-                                    <span>{{ message.sent_at|date:"d.m.Y H:i" }}</span>
+                                    <span class="nachrichten-card-date">{{ message.sent_at|date:"d.m.Y H:i" }}</span>
                                 </a>
                             {% endfor %}
                         </div>
