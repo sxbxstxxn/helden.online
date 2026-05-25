@@ -2,7 +2,6 @@ import logging
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models import Prefetch, Q
@@ -245,11 +244,11 @@ def gruppe_detail(request, user_id, group_name):
 		name=group_name,
 	)
 	can_manage_group = group.owner_id == request.user.id
-	invite_usernames = get_user_model().objects.exclude(pk=request.user.pk).order_by('username').values_list('username', flat=True) if can_manage_group else []
+	invite_form = HeroGroupInviteForm(group=group, sender=request.user) if can_manage_group else None
 	return render(request, 'gruppe_detail.html', {
 		'group': group,
 		'can_manage_group': can_manage_group,
-		'invite_usernames': invite_usernames,
+		'invite_form': invite_form,
 	})
 
 
@@ -345,7 +344,7 @@ def gruppe_einladen(request, pk):
 		)
 		messages.success(request, f'Einladung an {invited_user.username} wurde versendet.')
 	else:
-		messages.error(request, 'Einladung konnte nicht versendet werden: ' + ' '.join(form.errors.get('username', [])))
+		messages.error(request, 'Einladung konnte nicht versendet werden: ' + ' '.join(form.errors.get('user', [])))
 	return redirect('gruppen')
 
 

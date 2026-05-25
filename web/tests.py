@@ -526,11 +526,11 @@ class HeroGroupViewTests(TestCase):
         self.assertTrue(HeroGroup.objects.filter(pk=self.group.pk).exists())
         self.assertNotContains(self.client.get(reverse('gruppen')), 'Phileassons Erben')
 
-    def test_owner_can_invite_user_by_username(self):
+    def test_owner_can_invite_user_by_selection(self):
         self.client.force_login(self.owner)
 
         response = self.client.post(reverse('gruppe_einladen', args=[self.group.pk]), {
-            'username': self.invited.username,
+            'user': self.invited.pk,
         })
 
         self.assertRedirects(response, reverse('gruppen'))
@@ -540,7 +540,7 @@ class HeroGroupViewTests(TestCase):
         self.assertEqual(invitation.message.recipient, self.invited)
         self.assertIn('Phileassons Erben', invitation.message.subject)
 
-    def test_gruppen_shows_username_autocomplete_and_pending_slots(self):
+    def test_gruppen_shows_user_selection_and_pending_slots(self):
         Message.objects.create(
             sender=self.owner,
             recipient=self.invited,
@@ -556,8 +556,8 @@ class HeroGroupViewTests(TestCase):
 
         response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
 
-        self.assertContains(response, 'list="invite-usernames"')
-        self.assertContains(response, f'value="{self.invited.username}"')
+        self.assertContains(response, 'name="user"')
+        self.assertNotContains(response, 'list="invite-usernames"')
         self.assertContains(response, '1 User eingeladen, noch 7 Einladungen frei')
         self.assertContains(response, self.invited.username)
 

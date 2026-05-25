@@ -147,25 +147,20 @@ class HeroGroupForm(forms.ModelForm):
 
 
 class HeroGroupInviteForm(forms.Form):
-    username = forms.CharField(
-        label='Username',
-        max_length=150,
-        widget=forms.TextInput(attrs={'class': 'heon-input', 'placeholder': 'Username'}),
+    user = forms.ModelChoiceField(
+        queryset=get_user_model().objects.none(),
+        label='User',
+        widget=forms.Select(attrs={'class': 'heon-input'}),
     )
 
     def __init__(self, *args, **kwargs):
         self.group = kwargs.pop('group')
         self.sender = kwargs.pop('sender')
         super().__init__(*args, **kwargs)
+        self.fields['user'].queryset = get_user_model().objects.exclude(pk=self.sender.pk).order_by('username')
 
-    def clean_username(self):
-        username = self.cleaned_data['username'].strip()
-        User = get_user_model()
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist as exc:
-            raise forms.ValidationError('Diesen User gibt es nicht.') from exc
-
+    def clean_user(self):
+        user = self.cleaned_data['user']
         if user == self.sender:
             raise forms.ValidationError('Du kannst dich nicht selbst einladen.')
         if not self.group.can_invite_more():
@@ -175,8 +170,7 @@ class HeroGroupInviteForm(forms.Form):
         if self.group.invitations.filter(invited_user=user, status='pending').exists():
             raise forms.ValidationError('Fuer diesen User gibt es bereits eine offene Einladung.')
 
-        self.cleaned_data['user'] = user
-        return username
+        return user
 
 
 class HeroGroupInvitationResponseForm(forms.Form):

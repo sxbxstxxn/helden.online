@@ -52,12 +52,6 @@
                         {% endif %}
                     </div>
                 </div>
-                <datalist id="invite-usernames">
-                    {% for username in invite_usernames %}
-                        <option value="{{ username }}"></option>
-                    {% endfor %}
-                </datalist>
-
                 <div class="gruppen-participants">
                     {% if group.participants.all %}
                         <h4>Teilnehmer</h4>
@@ -117,8 +111,8 @@
                 {% if can_manage_group and group.available_invitation_count > 0 %}
                     <form method="post" action="{% url 'gruppe_einladen' group.pk %}" class="gruppen-invite-form">
                         {% csrf_token %}
-                        <label class="heon-text" for="invite-username-{{ group.pk }}">User einladen</label>
-                        <input class="heon-input" id="invite-username-{{ group.pk }}" name="username" type="text" placeholder="Username" list="invite-usernames" autocomplete="off" required>
+                        <label class="heon-text" for="{{ invite_form.user.id_for_label }}">{{ invite_form.user.label }}</label>
+                        {{ invite_form.user }}
                         <button class="heon-button heon-blue" type="submit">
                             <span class="material-icons md-fw">person_add</span> Einladung senden
                         </button>
