@@ -74,7 +74,7 @@
                                             <strong>{{ participant.character.name }}</strong>
                                             <small>Spieler: {{ participant.user.get_full_name|default:participant.user.username }}</small>
                                         </span>
-                                        <span>{{ participant.character.species }} &middot; {{ participant.character.culture }}</span>
+                                        <span>{{ participant.character.species }} &middot; {{ participant.character.culture }} &middot; {{ participant.character.profession }}</span>
                                         {% if can_manage_group or participant.user_id == request.user.id %}
                                             <span class="material-icons md-fw">chevron_right</span>
                                         {% endif %}

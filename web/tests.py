@@ -340,6 +340,7 @@ class HeroGroupViewTests(TestCase):
             name='Tsaiane',
             species='Mensch',
             culture='Gareth',
+            profession='Kriegerin',
             courage=12,
             sagacity=12,
             intuition=12,
@@ -516,6 +517,7 @@ class HeroGroupViewTests(TestCase):
             name='Fremder Gruppenheld',
             species='Mensch',
             culture='Andergast',
+            profession='Jäger',
             courage=12,
             sagacity=12,
             intuition=12,
@@ -647,6 +649,7 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
         self.assertNotContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, '/media/characters/portraits/tsaiane.png')
+        self.assertContains(response, 'Mensch &middot; Gareth &middot; Kriegerin')
 
     def test_group_owner_can_view_participant_character_but_not_edit_it(self):
         HeroGroupParticipant.objects.create(
@@ -728,6 +731,7 @@ class HeroGroupViewTests(TestCase):
             name='Boronja',
             species='Mensch',
             culture='Punin',
+            profession='Magierin',
             courage=12,
             sagacity=12,
             intuition=12,
@@ -768,6 +772,7 @@ class HeroGroupViewTests(TestCase):
                 name=f'Held {index}',
                 species='Mensch',
                 culture='Gareth',
+                profession='Abenteurer',
                 courage=12,
                 sagacity=12,
                 intuition=12,
@@ -844,6 +849,7 @@ class CharacterViewTests(TestCase):
             name='Alrik',
             species='Mensch',
             culture='Mittelreich',
+            profession='Söldner',
             courage=12,
             sagacity=11,
             intuition=13,
@@ -859,6 +865,7 @@ class CharacterViewTests(TestCase):
             'name': 'Rohaja',
             'species': 'Mensch',
             'culture': 'Gareth',
+            'profession': 'Ritterin',
             'courage': 14,
             'sagacity': 12,
             'intuition': 13,
@@ -887,6 +894,7 @@ class CharacterViewTests(TestCase):
             name='Fremder Held',
             species='Elf',
             culture='Auelfen',
+            profession='Wildnisläufer',
             courage=12,
             sagacity=12,
             intuition=12,
@@ -910,6 +918,7 @@ class CharacterViewTests(TestCase):
 
         self.assertContains(response, 'class="helden-card-link"')
         self.assertContains(response, reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
+        self.assertContains(response, 'Mensch &middot; Mittelreich &middot; Söldner')
         self.assertNotContains(response, '<dt>MU</dt>', html=False)
         self.assertNotContains(response, 'characters[j].open = false')
 
@@ -925,6 +934,7 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, '/media/characters/portraits/alrik.png')
         self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(detail_response, '/media/characters/portraits/alrik.png')
+        self.assertContains(detail_response, 'Mensch &middot; Mittelreich &middot; Söldner')
 
     def test_character_portrait_is_saved_as_jpg_in_character_folder(self):
         self.client.force_login(self.owner)

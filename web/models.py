@@ -118,6 +118,7 @@ class Character(models.Model):
     name = models.CharField(max_length=120)
     species = models.CharField(max_length=120)
     culture = models.CharField(max_length=120)
+    profession = models.CharField(max_length=120, default='')
     portrait = models.ImageField(upload_to=character_portrait_upload_to, null=True, blank=True)
     courage = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     sagacity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])

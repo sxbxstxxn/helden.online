@@ -36,7 +36,7 @@
                         {% endif %}
                     </div>
                     <div>
-                        <p>{{ character.species }} &middot; {{ character.culture }}</p>
+                        <p>{{ character.species }} &middot; {{ character.culture }} &middot; {{ character.profession }}</p>
                         {% if character.active_group_participations %}
                             {% for participation in character.active_group_participations %}
                                 <p class="helden-group-status">
