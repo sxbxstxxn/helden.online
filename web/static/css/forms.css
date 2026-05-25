@@ -494,6 +494,39 @@ textarea.heon-input {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.helden-form-attribute-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(8, minmax(48px, 1fr));
+}
+
+.helden-form-attribute {
+  background: #f3f3f3;
+  border-radius: 4px;
+  min-width: 0;
+  padding: 8px;
+  text-align: center;
+}
+
+.helden-form-attribute label {
+  color: #505050;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.helden-form-attribute input.heon-input {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ccc;
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 4px 0 0;
+  padding: 4px 0 2px;
+  text-align: center;
+}
+
 .helden-form-actions {
   display: flex;
   gap: 8px;
@@ -869,6 +902,10 @@ textarea.heon-input {
   }
 
   .helden-attribute-grid {
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+  }
+
+  .helden-form-attribute-grid {
     grid-template-columns: repeat(4, minmax(44px, 1fr));
   }
 
