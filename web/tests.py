@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.core import mail
+from django.core.mail import EmailMultiAlternatives
 from django.core.cache import cache
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -1264,3 +1265,48 @@ class LegalPageTests(TestCase):
         self.assertContains(datenschutz_response, 'mail@helden.online')
         self.assertNotContains(impressum_response, 'kontakt@example.com')
         self.assertNotContains(datenschutz_response, 'kontakt@example.com')
+
+
+class LatestEmailFileBackendTests(TestCase):
+    def test_backend_overwrites_latest_email_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            log_file = os.path.join(temp_dir, 'latest-email.eml')
+            html_file = os.path.join(temp_dir, 'latest-email.html')
+
+            with override_settings(
+                EMAIL_BACKEND='web.email_backends.LatestEmailFileBackend',
+                EMAIL_LOG_FILE=log_file,
+                EMAIL_HTML_LOG_FILE=html_file,
+                DEFAULT_FROM_EMAIL='dev@localhost',
+            ):
+                mail.send_mail('Erste Mail', 'Erster Inhalt', 'dev@localhost', ['a@example.com'])
+                mail.send_mail('Zweite Mail', 'Zweiter Inhalt', 'dev@localhost', ['b@example.com'])
+
+            content = open(log_file, encoding='utf-8').read()
+            self.assertIn('Zweite Mail', content)
+            self.assertIn('Zweiter Inhalt', content)
+            self.assertNotIn('Erste Mail', content)
+            self.assertFalse(os.path.exists(html_file))
+
+    def test_backend_writes_html_body_to_separate_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            log_file = os.path.join(temp_dir, 'latest-email.eml')
+            html_file = os.path.join(temp_dir, 'latest-email.html')
+
+            with override_settings(
+                EMAIL_BACKEND='web.email_backends.LatestEmailFileBackend',
+                EMAIL_LOG_FILE=log_file,
+                EMAIL_HTML_LOG_FILE=html_file,
+                DEFAULT_FROM_EMAIL='dev@localhost',
+            ):
+                message = EmailMultiAlternatives(
+                    'HTML Mail',
+                    'Textinhalt',
+                    'dev@localhost',
+                    ['a@example.com'],
+                )
+                message.attach_alternative('<strong>HTML Inhalt</strong>', 'text/html')
+                message.send()
+
+            self.assertIn('HTML Mail', open(log_file, encoding='utf-8').read())
+            self.assertEqual(open(html_file, encoding='utf-8').read(), '<strong>HTML Inhalt</strong>')

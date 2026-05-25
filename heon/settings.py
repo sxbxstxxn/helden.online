@@ -164,6 +164,8 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 CONTACT_EMAIL = env('CONTACT_EMAIL', default=DEFAULT_FROM_EMAIL)
 LEGAL_EMAIL = env('LEGAL_EMAIL', default='mail@helden.online')
+EMAIL_LOG_FILE = env('EMAIL_LOG_FILE', default=str(BASE_DIR / 'latest-email.eml'))
+EMAIL_HTML_LOG_FILE = env('EMAIL_HTML_LOG_FILE', default=str(BASE_DIR / 'latest-email.html'))
 
 
 LOGIN_REDIRECT_URL = '/'

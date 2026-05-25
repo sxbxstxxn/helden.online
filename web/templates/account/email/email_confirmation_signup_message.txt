@@ -1,0 +1,20 @@
+{% load account %}
+{% user_display user as user_display %}
+Hallo {{ user_display }},
+
+du hast dich bei Helden ONLINE registriert.
+
+{% if code %}
+Dein Bestaetigungscode lautet:
+
+{{ code }}
+{% else %}
+Bitte bestaetige deine E-Mail-Adresse ueber diesen Link:
+
+{{ activate_url }}
+{% endif %}
+
+Falls du dich nicht registriert hast, kannst du diese Nachricht ignorieren.
+
+Viele Gruesse
+Helden ONLINE
