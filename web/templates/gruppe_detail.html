@@ -11,16 +11,25 @@
         <div class="heon-container heon-grey heon-page-panel">
             <div class="gruppen-heading heon-page-heading">
                 <h2><span class="material-icons md-fw">family_restroom</span> {{ group.name }}</h2>
+                <div class="gruppen-actions">
+                    {% if can_manage_group %}
+                        <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey" title="Zur&uuml;ck zur &Uuml;bersicht">
+                            <span class="material-icons md-fw">list</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'helden' %}" class="heon-button heon-light-grey" title="Zur&uuml;ck zur &Uuml;bersicht">
+                            <span class="material-icons md-fw">list</span>
+                        </a>
+                    {% endif %}
                 {% if can_manage_group %}
-                    <div class="gruppen-actions">
                         <a href="{% url 'gruppe_bearbeiten' group.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
                             <span class="material-icons md-fw">edit</span>
                         </a>
                         <a href="{% url 'gruppe_loeschen' group.pk %}" class="heon-button heon-red" title="L&ouml;schen">
                             <span class="material-icons md-fw">delete</span>
                         </a>
-                    </div>
                 {% endif %}
+                </div>
             </div>
             <div class="heon-container heon-white heon-padding">
                 <div class="gruppen-detail-summary gruppen-detail-layout">
@@ -115,14 +124,6 @@
                         </button>
                     </form>
                 {% endif %}
-
-                <div class="gruppen-form-actions">
-                    {% if can_manage_group %}
-                        <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
-                    {% else %}
-                        <a href="{% url 'helden' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>

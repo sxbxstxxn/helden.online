@@ -10,16 +10,19 @@
         <div class="heon-container heon-grey heon-page-panel">
             <div class="helden-heading heon-page-heading">
                 <h2><span class="material-icons md-fw">accessibility</span> {{ character.name }}</h2>
+                <div class="helden-actions">
+                    <a href="{% url 'helden' %}" class="heon-button heon-light-grey" title="Zur&uuml;ck zur &Uuml;bersicht">
+                        <span class="material-icons md-fw">list</span>
+                    </a>
                 {% if can_manage_character %}
-                    <div class="helden-actions">
                         <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
                             <span class="material-icons md-fw">edit</span>
                         </a>
                         <a href="{% url 'charakter_loeschen' character.pk %}" class="heon-button heon-red" title="L&ouml;schen">
                             <span class="material-icons md-fw">delete</span>
                         </a>
-                    </div>
                 {% endif %}
+                </div>
             </div>
             <div class="heon-container heon-white heon-padding">
                 <div class="helden-detail-layout">
@@ -70,10 +73,6 @@
                     <div><dt>KO</dt><dd>{{ character.constitution }}</dd></div>
                     <div><dt>KK</dt><dd>{{ character.strength }}</dd></div>
                 </dl>
-
-                <div class="helden-form-actions">
-                    <a href="{% url 'helden' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
-                </div>
             </div>
         </div>
     </div>
