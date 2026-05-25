@@ -33,6 +33,22 @@ h5 {
   min-width: 0;
 }
 
+select.heon-input {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: inherit;
+}
+
+textarea.heon-input {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: none;
+}
+
 .heon-page-row {
   padding-top: 22px;
 }
