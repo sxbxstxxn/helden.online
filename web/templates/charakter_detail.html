@@ -10,14 +10,16 @@
         <div class="heon-container heon-grey heon-page-panel">
             <div class="helden-heading heon-page-heading">
                 <h2><span class="material-icons md-fw">accessibility</span> {{ character.name }}</h2>
-                <div class="helden-actions">
-                    <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
-                        <span class="material-icons md-fw">edit</span>
-                    </a>
-                    <a href="{% url 'charakter_loeschen' character.pk %}" class="heon-button heon-red" title="L&ouml;schen">
-                        <span class="material-icons md-fw">delete</span>
-                    </a>
-                </div>
+                {% if can_manage_character %}
+                    <div class="helden-actions">
+                        <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                            <span class="material-icons md-fw">edit</span>
+                        </a>
+                        <a href="{% url 'charakter_loeschen' character.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                            <span class="material-icons md-fw">delete</span>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
             <div class="heon-container heon-white heon-padding">
                 <div class="helden-detail-layout">
@@ -38,11 +40,13 @@
                                     <span class="material-icons md-fw">family_restroom</span>
                                     Aktiv in: {{ participation.group.name }}
                                 </p>
-                                <p>
-                                    <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave">
-                                        <span class="material-icons md-fw">logout</span> Gruppe verlassen: {{ participation.group.name }}
-                                    </a>
-                                </p>
+                                {% if can_manage_character %}
+                                    <p>
+                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave">
+                                            <span class="material-icons md-fw">logout</span> Gruppe verlassen: {{ participation.group.name }}
+                                        </a>
+                                    </p>
+                                {% endif %}
                             {% endfor %}
                         {% else %}
                             <p class="helden-group-status">

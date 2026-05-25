@@ -442,6 +442,43 @@ h5 {
 .gruppen-participant-tile {
   border: 1px solid #ddd;
   border-radius: 4px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.gruppen-participant-link {
+  align-items: center;
+  color: inherit;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(120px, 180px) auto;
+  min-height: 58px;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.gruppen-participant-link > span:nth-child(2) {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.gruppen-participant-link strong,
+.gruppen-participant-link small,
+.gruppen-participant-link > span:nth-child(3) {
+  overflow-wrap: anywhere;
+}
+
+.gruppen-participant-link small,
+.gruppen-participant-link > span:nth-child(3) {
+  color: #505050;
+}
+
+.gruppen-participant-actions {
+  align-items: center;
+  border-left: 1px solid #ddd;
+  display: flex;
+  padding: 10px 12px;
 }
 
 .gruppen-participant-tile summary {
@@ -604,6 +641,24 @@ h5 {
 
   .gruppen-card-link > .material-icons {
     justify-self: end;
+  }
+
+  .gruppen-participant-tile,
+  .gruppen-participant-link {
+    grid-template-columns: 1fr;
+  }
+
+  .gruppen-participant-link {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+  }
+
+  .gruppen-participant-link > span:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .gruppen-participant-actions {
+    border-left: 0;
+    border-top: 1px solid #ddd;
   }
 
   .helden-card-link,

@@ -392,7 +392,7 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(response, '1 User eingeladen, noch 7 Einladungen frei')
         self.assertContains(response, self.invited.username)
 
-    def test_gruppen_shows_character_portrait_in_summary_and_details(self):
+    def test_gruppen_shows_participant_as_link_to_character_detail(self):
         self.character.portrait = 'characters/portraits/tsaiane.png'
         self.character.save(update_fields=['portrait'])
         HeroGroupParticipant.objects.create(
@@ -407,9 +407,27 @@ class HeroGroupViewTests(TestCase):
 
         self.assertContains(overview_response, 'Phileassons Erben')
         self.assertNotContains(overview_response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(response, 'class="gruppen-participant-link"')
+        self.assertContains(response, reverse('charakter_detail', args=[self.invited.pk, self.character.name]))
         self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
-        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertNotContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, '/media/characters/portraits/tsaiane.png')
+
+    def test_group_owner_can_view_participant_character_but_not_edit_it(self):
+        HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('charakter_detail', args=[self.invited.pk, self.character.name]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Tsaiane')
+        self.assertContains(response, '<dt>MU</dt>', html=False)
+        self.assertNotContains(response, reverse('charakter_bearbeiten', args=[self.character.pk]))
+        self.assertNotContains(response, reverse('charakter_loeschen', args=[self.character.pk]))
 
     def test_invited_user_accepts_invitation_with_character_from_message(self):
         message = Message.objects.create(

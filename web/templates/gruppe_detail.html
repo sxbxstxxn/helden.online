@@ -41,8 +41,8 @@
                         <h4>Teilnehmer</h4>
                         <div class="helden-list">
                             {% for participant in group.participants.all %}
-                                <details class="gruppen-participant-tile">
-                                    <summary>
+                                <article class="gruppen-participant-tile">
+                                    <a class="gruppen-participant-link" href="{% url 'charakter_detail' participant.character.owner_id participant.character.name %}">
                                         {% if participant.character.portrait %}
                                             <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-summary">
                                         {% else %}
@@ -54,36 +54,15 @@
                                             <strong>{{ participant.character.name }}</strong>
                                             <small>Spieler: {{ participant.user.get_full_name|default:participant.user.username }}</small>
                                         </span>
-                                        <span class="material-icons md-fw">expand_more</span>
-                                    </summary>
-                                    <div class="gruppen-participant-details">
-                                        <div class="helden-detail-intro">
-                                            {% if participant.character.portrait %}
-                                                <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-detail">
-                                            {% else %}
-                                                <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
-                                                    <span class="material-icons md-fw">person</span>
-                                                </span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="gruppen-participant-meta">
-                                            <p>{{ participant.character.species }} &middot; {{ participant.character.culture }}</p>
-                                            <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">
-                                                <span class="material-icons md-fw">person_remove</span>
-                                            </a>
-                                        </div>
-                                        <dl class="helden-attribute-grid">
-                                            <div><dt>MU</dt><dd>{{ participant.character.courage }}</dd></div>
-                                            <div><dt>KL</dt><dd>{{ participant.character.sagacity }}</dd></div>
-                                            <div><dt>IN</dt><dd>{{ participant.character.intuition }}</dd></div>
-                                            <div><dt>CH</dt><dd>{{ participant.character.charisma }}</dd></div>
-                                            <div><dt>FF</dt><dd>{{ participant.character.dexterity }}</dd></div>
-                                            <div><dt>GE</dt><dd>{{ participant.character.agility }}</dd></div>
-                                            <div><dt>KO</dt><dd>{{ participant.character.constitution }}</dd></div>
-                                            <div><dt>KK</dt><dd>{{ participant.character.strength }}</dd></div>
-                                        </dl>
+                                        <span>{{ participant.character.species }} &middot; {{ participant.character.culture }}</span>
+                                        <span class="material-icons md-fw">chevron_right</span>
+                                    </a>
+                                    <div class="gruppen-participant-actions">
+                                        <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">
+                                            <span class="material-icons md-fw">person_remove</span>
+                                        </a>
                                     </div>
-                                </details>
+                                </article>
                             {% endfor %}
                         </div>
                     {% else %}
