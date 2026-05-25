@@ -116,7 +116,7 @@ class RssNewsTests(TestCase):
         self.assertEqual(first_result[0]['summary'], 'Kurzer Text')
 
     @patch('web.views.get_rss_news')
-    def test_start_page_renders_rss_news_and_filter_buttons(self, get_news):
+    def test_news_page_renders_rss_news_and_filter_buttons(self, get_news):
         User = get_user_model()
         user = User.objects.create_user(username='reader', password='testpass123')
         get_news.return_value = [{
@@ -129,10 +129,30 @@ class RssNewsTests(TestCase):
         }]
         self.client.force_login(user)
 
-        response = self.client.get(reverse('web'))
+        response = self.client.get(reverse('news'))
 
         self.assertContains(response, 'Erste Meldung')
         self.assertContains(response, 'data-feed="testfeed"')
+
+    @patch('web.views.get_rss_news')
+    def test_start_page_does_not_render_rss_news(self, get_news):
+        User = get_user_model()
+        user = User.objects.create_user(username='starter', password='testpass123')
+        get_news.return_value = [{
+            'source': 'Testfeed',
+            'source_slug': 'testfeed',
+            'title': 'Erste Meldung',
+            'link': 'https://example.com/erste',
+            'summary': 'Kurzer Text',
+            'published_at': None,
+        }]
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('web'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Erste Meldung')
+        get_news.assert_not_called()
 
 
 class AccountTests(TestCase):

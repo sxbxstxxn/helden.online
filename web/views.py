@@ -43,10 +43,7 @@ class ContactForm(forms.Form):
 # Create your views here.
 @login_required
 def web(request):
-	return render(request, 'web.html', {
-		'rss_feeds': settings.RSS_FEEDS,
-		'news_items': get_rss_news(),
-	})
+	return render(request, 'web.html')
 
 @login_required
 def helden(request):
@@ -312,7 +309,10 @@ def events(request):
 
 @login_required
 def news(request):
-	return render(request,'news.html')
+	return render(request, 'news.html', {
+		'rss_feeds': settings.RSS_FEEDS,
+		'news_items': get_rss_news(),
+	})
 
 @login_required
 def forum(request):
