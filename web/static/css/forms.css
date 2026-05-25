@@ -141,7 +141,7 @@ h5 {
   align-items: center;
   cursor: pointer;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(130px, 220px) auto;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(130px, 220px) auto;
   gap: 12px;
   list-style: none;
   min-height: 58px;
@@ -152,10 +152,41 @@ h5 {
   display: none;
 }
 
-.helden-card summary span:first-child {
+.helden-card summary > span:nth-child(2) {
   display: grid;
   gap: 3px;
   min-width: 0;
+}
+
+.helden-portrait {
+  aspect-ratio: 1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.helden-portrait-summary {
+  height: 48px;
+  width: 48px;
+}
+
+.helden-portrait-detail {
+  height: 96px;
+  width: 96px;
+}
+
+.helden-portrait-placeholder {
+  align-items: center;
+  background: #f3f3f3;
+  color: #505050;
+  justify-content: center;
+}
+
+.helden-detail-intro {
+  margin-bottom: 12px;
 }
 
 .helden-summary-groups {
@@ -357,9 +388,9 @@ h5 {
 .gruppen-participant-tile summary {
   align-items: center;
   cursor: pointer;
-  display: flex;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 12px;
-  justify-content: space-between;
   list-style: none;
   min-height: 58px;
   padding: 10px 12px;
@@ -369,7 +400,7 @@ h5 {
   display: none;
 }
 
-.gruppen-participant-tile summary span:first-child {
+.gruppen-participant-tile summary > span:nth-child(2) {
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -495,9 +526,17 @@ h5 {
     flex-direction: column;
   }
 
+  .gruppen-participant-tile summary {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+  }
+
+  .gruppen-participant-tile summary > .material-icons {
+    justify-self: end;
+  }
+
   .helden-card summary {
     align-items: stretch;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
   }
 
   .helden-summary-groups {

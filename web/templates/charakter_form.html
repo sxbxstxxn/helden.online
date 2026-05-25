@@ -10,7 +10,7 @@
         <div class="heon-container heon-grey heon-page-panel">
             <h2>{{ title }}</h2>
             <div class="heon-container heon-white heon-padding">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
@@ -26,6 +26,11 @@
                         <label class="heon-text" for="{{ form.culture.id_for_label }}">{{ form.culture.label }}</label>
                         {{ form.culture.errors }}
                         {{ form.culture }}
+
+                        <label class="heon-text" for="{{ form.portrait.id_for_label }}">{{ form.portrait.label }}</label>
+                        {{ form.portrait.errors }}
+                        {{ form.portrait }}
+                        <p class="heon-small heon-text-grey">Quadratisch, maximal 256 x 256 Pixel und 200 KB.</p>
                     </div>
 
                     <h3>Eigenschaften</h3>

@@ -62,7 +62,7 @@ def helden(request):
 @login_required
 def charakter_anlegen(request):
 	if request.method == 'POST':
-		form = CharacterForm(request.POST)
+		form = CharacterForm(request.POST, request.FILES)
 		if form.is_valid():
 			character = form.save(commit=False)
 			character.owner = request.user
@@ -87,7 +87,7 @@ def charakter_bearbeiten(request, pk):
 		pk=pk,
 	)
 	if request.method == 'POST':
-		form = CharacterForm(request.POST, instance=character)
+		form = CharacterForm(request.POST, request.FILES, instance=character)
 		if form.is_valid():
 			form.save()
 			messages.success(request, 'Charakter erfolgreich gespeichert.')

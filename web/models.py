@@ -57,6 +57,7 @@ class Character(models.Model):
     name = models.CharField(max_length=120)
     species = models.CharField(max_length=120)
     culture = models.CharField(max_length=120)
+    portrait = models.ImageField(upload_to='characters/portraits/', null=True, blank=True)
     courage = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     sagacity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     intuition = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])

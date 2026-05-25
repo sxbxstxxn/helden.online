@@ -52,6 +52,13 @@
                                             {% for participant in group.participants.all %}
                                                 <details class="gruppen-participant-tile">
                                                     <summary>
+                                                        {% if participant.character.portrait %}
+                                                            <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-summary">
+                                                        {% else %}
+                                                            <span class="helden-portrait helden-portrait-summary helden-portrait-placeholder" aria-hidden="true">
+                                                                <span class="material-icons md-fw">person</span>
+                                                            </span>
+                                                        {% endif %}
                                                         <span>
                                                             <strong>{{ participant.character.name }}</strong>
                                                             <small>Spieler: {{ participant.user.get_full_name|default:participant.user.username }}</small>
@@ -59,6 +66,15 @@
                                                         <span class="material-icons md-fw">expand_more</span>
                                                     </summary>
                                                     <div class="gruppen-participant-details">
+                                                        <div class="helden-detail-intro">
+                                                            {% if participant.character.portrait %}
+                                                                <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-detail">
+                                                            {% else %}
+                                                                <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                                                                    <span class="material-icons md-fw">person</span>
+                                                                </span>
+                                                            {% endif %}
+                                                        </div>
                                                         <div class="gruppen-participant-meta">
                                                             <p>{{ participant.character.species }} &middot; {{ participant.character.culture }}</p>
                                                             <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">

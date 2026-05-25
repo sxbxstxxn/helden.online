@@ -1,14 +1,18 @@
 import base64
+import io
 
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.cache import cache
 from django.core.mail.backends.base import BaseEmailBackend
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from PIL import Image
 from smtplib import SMTPException
 from unittest.mock import patch
 
+from .forms import CharacterForm
 from .models import Character, HeroGroup, HeroGroupInvitation, HeroGroupParticipant, Message
 from .rss import get_rss_news
 
@@ -16,6 +20,14 @@ from .rss import get_rss_news
 def basic_auth(username, password):
     credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
     return f'Basic {credentials}'
+
+
+def image_upload(name='portrait.png', size=(128, 128), image_format='PNG'):
+    image = Image.new('RGB', size, color=(228, 116, 41))
+    content = io.BytesIO()
+    image.save(content, format=image_format)
+    content.seek(0)
+    return SimpleUploadedFile(name, content.read(), content_type=f'image/{image_format.lower()}')
 
 
 class FailingEmailBackend(BaseEmailBackend):
@@ -372,6 +384,22 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(response, '1 User eingeladen, noch 7 Einladungen frei')
         self.assertContains(response, self.invited.username)
 
+    def test_gruppen_shows_character_portrait_in_summary_and_details(self):
+        self.character.portrait = 'characters/portraits/tsaiane.png'
+        self.character.save(update_fields=['portrait'])
+        HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('gruppen'))
+
+        self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
+        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(response, '/media/characters/portraits/tsaiane.png')
+
     def test_invited_user_accepts_invitation_with_character_from_message(self):
         message = Message.objects.create(
             sender=self.owner,
@@ -620,6 +648,36 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, '<summary>', html=False)
         self.assertContains(response, '<dt>MU</dt>', html=False)
         self.assertContains(response, 'characters[j].open = false')
+
+    def test_helden_shows_character_portrait_in_summary_and_details(self):
+        self.character.portrait = 'characters/portraits/alrik.png'
+        self.character.save(update_fields=['portrait'])
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('helden'))
+
+        self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
+        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(response, '/media/characters/portraits/alrik.png')
+
+    def test_character_portrait_must_be_small_square_image(self):
+        data = self.character_data()
+        valid_form = CharacterForm(data=data, files={'portrait': image_upload()})
+        wide_form = CharacterForm(data=data, files={'portrait': image_upload(size=(128, 96))})
+        large_pixel_form = CharacterForm(data=data, files={'portrait': image_upload(size=(512, 512))})
+        large_file_form = CharacterForm(data=data, files={'portrait': image_upload(
+            name='large.bmp',
+            size=(300, 300),
+            image_format='BMP',
+        )})
+
+        self.assertTrue(valid_form.is_valid())
+        self.assertFalse(wide_form.is_valid())
+        self.assertIn('quadratisch', str(wide_form.errors['portrait']))
+        self.assertFalse(large_pixel_form.is_valid())
+        self.assertIn('256 x 256', str(large_pixel_form.errors['portrait']))
+        self.assertFalse(large_file_form.is_valid())
+        self.assertIn('200 KB', str(large_file_form.errors['portrait']))
 
     def test_helden_shows_active_group_for_character(self):
         group_owner = get_user_model().objects.create_user(username='group_owner_for_character', password='testpass123')

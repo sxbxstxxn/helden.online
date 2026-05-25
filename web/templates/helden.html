@@ -21,6 +21,13 @@
                         {% for character in characters %}
                             <details class="helden-card character-accordion">
                                 <summary>
+                                    {% if character.portrait %}
+                                        <img src="{{ character.portrait.url }}" alt="{{ character.name }}" class="helden-portrait helden-portrait-summary">
+                                    {% else %}
+                                        <span class="helden-portrait helden-portrait-placeholder" aria-hidden="true">
+                                            <span class="material-icons md-fw">person</span>
+                                        </span>
+                                    {% endif %}
                                     <span>
                                         <strong>{{ character.name }}</strong>
                                         <small>{{ character.species }} &middot; {{ character.culture }}</small>
@@ -37,6 +44,15 @@
                                     <span class="material-icons md-fw">expand_more</span>
                                 </summary>
                                 <div class="helden-card-details">
+                                    <div class="helden-detail-intro">
+                                        {% if character.portrait %}
+                                            <img src="{{ character.portrait.url }}" alt="{{ character.name }}" class="helden-portrait helden-portrait-detail">
+                                        {% else %}
+                                            <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                                                <span class="material-icons md-fw">person</span>
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                     {% if character.active_group_participations %}
                                         {% for participation in character.active_group_participations %}
                                             <p class="helden-group-status">
