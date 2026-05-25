@@ -188,9 +188,33 @@ def gruppen(request):
 			to_attr='pending_invitations',
 		),
 	)
-	invite_usernames = get_user_model().objects.exclude(pk=request.user.pk).order_by('username').values_list('username', flat=True)
 	return render(request, 'gruppen.html', {
 		'groups': groups,
+	})
+
+
+@login_required
+def gruppe_detail(request, user_id, group_name):
+	group = get_object_or_404(
+		HeroGroup.objects.prefetch_related(
+			'participants__character',
+			'participants__user',
+			Prefetch(
+				'invitations',
+				queryset=HeroGroupInvitation.objects.filter(
+					status=HeroGroupInvitation.STATUS_PENDING,
+				).select_related('invited_user'),
+				to_attr='pending_invitations',
+			),
+		),
+		owner=request.user,
+		owner_id=user_id,
+		deleted_at__isnull=True,
+		name=group_name,
+	)
+	invite_usernames = get_user_model().objects.exclude(pk=request.user.pk).order_by('username').values_list('username', flat=True)
+	return render(request, 'gruppe_detail.html', {
+		'group': group,
 		'invite_usernames': invite_usernames,
 	})
 

@@ -312,7 +312,15 @@ class HeroGroupViewTests(TestCase):
         response = self.client.get(reverse('gruppen'))
 
         self.assertContains(response, 'Phileassons Erben')
+        self.assertContains(response, reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
         self.assertNotContains(response, 'Fremde Runde')
+
+    def test_group_detail_is_only_visible_to_owner(self):
+        self.client.force_login(self.outsider)
+
+        response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
+        self.assertEqual(response.status_code, 404)
 
     def test_user_can_edit_own_group(self):
         self.client.force_login(self.owner)
@@ -377,7 +385,7 @@ class HeroGroupViewTests(TestCase):
         )
         self.client.force_login(self.owner)
 
-        response = self.client.get(reverse('gruppen'))
+        response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
 
         self.assertContains(response, 'list="invite-usernames"')
         self.assertContains(response, f'value="{self.invited.username}"')
@@ -394,8 +402,11 @@ class HeroGroupViewTests(TestCase):
         )
         self.client.force_login(self.owner)
 
-        response = self.client.get(reverse('gruppen'))
+        overview_response = self.client.get(reverse('gruppen'))
+        response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
 
+        self.assertContains(overview_response, 'Phileassons Erben')
+        self.assertNotContains(overview_response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
         self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, '/media/characters/portraits/tsaiane.png')

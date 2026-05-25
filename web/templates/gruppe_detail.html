@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ group.name }}{% endblock title %}
+
+{% block content %}
+
+<div class="heon-row heon-page-row">
+    <div class="heon-col m2 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m8 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <div class="gruppen-heading heon-page-heading">
+                <h2><span class="material-icons md-fw">family_restroom</span> {{ group.name }}</h2>
+                <div class="gruppen-actions">
+                    <a href="{% url 'gruppe_bearbeiten' group.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                        <span class="material-icons md-fw">edit</span>
+                    </a>
+                    <a href="{% url 'gruppe_loeschen' group.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                        <span class="material-icons md-fw">delete</span>
+                    </a>
+                </div>
+            </div>
+            <div class="heon-container heon-white heon-padding">
+                <div class="gruppen-detail-summary">
+                    <p>{{ group.description|linebreaksbr }}</p>
+                    <p>{{ group.participants.count }} von 8 Teilnehmern</p>
+                    {% if group.pending_invitations %}
+                        <p>{{ group.pending_invitations|length }} User eingeladen, noch {{ group.available_invitation_count }} Einladungen frei</p>
+                    {% else %}
+                        <p>Noch {{ group.available_invitation_count }} Einladungen frei</p>
+                    {% endif %}
+                </div>
+                <datalist id="invite-usernames">
+                    {% for username in invite_usernames %}
+                        <option value="{{ username }}"></option>
+                    {% endfor %}
+                </datalist>
+
+                <div class="gruppen-participants">
+                    {% if group.participants.all %}
+                        <h4>Teilnehmer</h4>
+                        <div class="helden-list">
+                            {% for participant in group.participants.all %}
+                                <details class="gruppen-participant-tile">
+                                    <summary>
+                                        {% if participant.character.portrait %}
+                                            <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-summary">
+                                        {% else %}
+                                            <span class="helden-portrait helden-portrait-summary helden-portrait-placeholder" aria-hidden="true">
+                                                <span class="material-icons md-fw">person</span>
+                                            </span>
+                                        {% endif %}
+                                        <span>
+                                            <strong>{{ participant.character.name }}</strong>
+                                            <small>Spieler: {{ participant.user.get_full_name|default:participant.user.username }}</small>
+                                        </span>
+                                        <span class="material-icons md-fw">expand_more</span>
+                                    </summary>
+                                    <div class="gruppen-participant-details">
+                                        <div class="helden-detail-intro">
+                                            {% if participant.character.portrait %}
+                                                <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-detail">
+                                            {% else %}
+                                                <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                                                    <span class="material-icons md-fw">person</span>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="gruppen-participant-meta">
+                                            <p>{{ participant.character.species }} &middot; {{ participant.character.culture }}</p>
+                                            <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">
+                                                <span class="material-icons md-fw">person_remove</span>
+                                            </a>
+                                        </div>
+                                        <dl class="helden-attribute-grid">
+                                            <div><dt>MU</dt><dd>{{ participant.character.courage }}</dd></div>
+                                            <div><dt>KL</dt><dd>{{ participant.character.sagacity }}</dd></div>
+                                            <div><dt>IN</dt><dd>{{ participant.character.intuition }}</dd></div>
+                                            <div><dt>CH</dt><dd>{{ participant.character.charisma }}</dd></div>
+                                            <div><dt>FF</dt><dd>{{ participant.character.dexterity }}</dd></div>
+                                            <div><dt>GE</dt><dd>{{ participant.character.agility }}</dd></div>
+                                            <div><dt>KO</dt><dd>{{ participant.character.constitution }}</dd></div>
+                                            <div><dt>KK</dt><dd>{{ participant.character.strength }}</dd></div>
+                                        </dl>
+                                    </div>
+                                </details>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>Noch keine Teilnehmer.</p>
+                    {% endif %}
+                </div>
+
+                {% if group.pending_invitations %}
+                    <div class="gruppen-pending-invitations">
+                        <h4>Offene Einladungen</h4>
+                        <ul>
+                            {% for invitation in group.pending_invitations %}
+                                <li>{{ invitation.invited_user.get_full_name|default:invitation.invited_user.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if group.available_invitation_count > 0 %}
+                    <form method="post" action="{% url 'gruppe_einladen' group.pk %}" class="gruppen-invite-form">
+                        {% csrf_token %}
+                        <label class="heon-text" for="invite-username-{{ group.pk }}">User einladen</label>
+                        <input class="heon-input" id="invite-username-{{ group.pk }}" name="username" type="text" placeholder="Username" list="invite-usernames" autocomplete="off" required>
+                        <button class="heon-button heon-blue" type="submit">
+                            <span class="material-icons md-fw">person_add</span> Einladung senden
+                        </button>
+                    </form>
+                {% endif %}
+
+                <div class="gruppen-form-actions">
+                    <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m2">&nbsp;</div>
+</div>
+
+{% endblock content %}

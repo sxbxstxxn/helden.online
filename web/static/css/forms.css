@@ -367,7 +367,51 @@ h5 {
 .gruppen-card {
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 16px;
+}
+
+.gruppen-card-link {
+  align-items: center;
+  color: inherit;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 170px) minmax(100px, 140px) auto;
+  min-height: 58px;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.gruppen-card-link > span:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.gruppen-card-link strong,
+.gruppen-card-link small,
+.gruppen-summary-meta {
+  overflow-wrap: anywhere;
+}
+
+.gruppen-card-link small,
+.gruppen-summary-meta {
+  color: #505050;
+}
+
+.gruppen-summary-meta {
+  background: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 5px 10px;
+  text-align: center;
+}
+
+.gruppen-detail-summary {
+  margin-bottom: 16px;
+}
+
+.gruppen-detail-summary p {
+  margin: 6px 0;
 }
 
 .gruppen-card-header {
@@ -546,6 +590,19 @@ h5 {
   }
 
   .gruppen-participant-tile summary > .material-icons {
+    justify-self: end;
+  }
+
+  .gruppen-card-link {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .gruppen-summary-meta {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .gruppen-card-link > .material-icons {
     justify-self: end;
   }
 
