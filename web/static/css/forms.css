@@ -149,6 +149,12 @@ h5 {
   width: auto;
 }
 
+.nachrichten-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
 .nachrichten-card-list {
   display: none;
 }
@@ -716,6 +722,7 @@ h5 {
   .helden-card-header,
   .helden-form-actions,
   .nachrichten-heading,
+  .nachrichten-actions,
   .gruppen-participant-meta,
   .gruppen-heading,
   .gruppen-card-header,
@@ -794,11 +801,13 @@ h5 {
   }
 
   .helden-actions,
+  .nachrichten-actions,
   .gruppen-actions {
     width: 100%;
   }
 
   .helden-actions .heon-button,
+  .nachrichten-actions .heon-button,
   .gruppen-actions .heon-button {
     flex: 1 1 0;
   }

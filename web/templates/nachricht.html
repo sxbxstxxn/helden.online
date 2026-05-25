@@ -8,7 +8,17 @@
     <div class="heon-col m2 heon-hide-small"> </div>
     <div class="heon-col m8 s12">
         <div class="heon-container heon-grey heon-page-panel">
-            <h2 class="heon-page-heading">Nachricht</h2>
+            <div class="nachrichten-heading heon-page-heading">
+                <h2><span class="material-icons md-fw">mail</span> Nachricht</h2>
+                <div class="nachrichten-actions">
+                    <a href="{% url 'nachrichten' %}" class="heon-button heon-light-grey" title="Zur&uuml;ck zur Nachrichten&uuml;bersicht">
+                        <span class="material-icons md-fw">list</span>
+                    </a>
+                    <a href="{% url 'nachricht_loeschen' message.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                        <span class="material-icons md-fw">delete</span>
+                    </a>
+                </div>
+            </div>
             <div class="heon-container heon-white heon-padding">
                 <div style="padding-bottom:16px">
                     <p><strong>Betreff:</strong> {{ message.subject }}</p>
@@ -69,10 +79,6 @@
                         </form>
                     </div>
                 {% endif %}
-                <div class="heon-text-center">
-                    <a href="{% url 'nachrichten' %}" class="heon-button heon-light-grey">Zurück zur Nachrichtenübersicht</a>
-                    <a href="{% url 'nachricht_loeschen' message.pk %}" class="heon-button heon-red">Löschen</a>
-                </div>
             </div>
         </div>
     </div>
