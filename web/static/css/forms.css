@@ -38,7 +38,11 @@ h5 {
 }
 
 .heon-page-panel {
-  padding: 24px 20px 32px;
+  padding: 20px 20px 20px;
+}
+
+.heon-page-heading {
+  padding-bottom: 20px;
 }
 
 .heon-main-sidebar {
