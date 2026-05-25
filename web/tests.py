@@ -249,6 +249,49 @@ class MessageViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_user_can_reply_to_normal_message_with_original_text(self):
+        self.client.force_login(self.recipient)
+
+        response = self.client.post(reverse('nachricht', args=[self.message.pk]), {
+            'action': 'reply_message',
+            'body': 'Danke fuer die Nachricht.',
+        })
+
+        self.assertRedirects(response, reverse('nachricht', args=[self.message.pk]))
+        reply = Message.objects.get(subject='Re: Testnachricht')
+        self.assertEqual(reply.sender, self.recipient)
+        self.assertEqual(reply.recipient, self.sender)
+        self.assertIn('Danke fuer die Nachricht.', reply.body)
+        self.assertIn('--- Urspruengliche Nachricht ---', reply.body)
+        self.assertIn('Betreff: Testnachricht', reply.body)
+        self.assertIn('> Hallo', reply.body)
+
+    def test_group_invitation_message_does_not_show_reply_form(self):
+        group = HeroGroup.objects.create(
+            owner=self.sender,
+            name='Einladungsgruppe',
+            description='Test',
+        )
+        invitation_message = Message.objects.create(
+            sender=self.sender,
+            recipient=self.recipient,
+            subject='Einladung zur Gruppe Einladungsgruppe',
+            body='Bitte antworte ueber die Einladung.',
+        )
+        HeroGroupInvitation.objects.create(
+            group=group,
+            invited_user=self.recipient,
+            invited_by=self.sender,
+            message=invitation_message,
+        )
+        self.client.force_login(self.recipient)
+
+        response = self.client.get(reverse('nachricht', args=[invitation_message.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Gruppeneinladung beantworten')
+        self.assertNotContains(response, 'Antwort senden')
+
     def test_sidebar_shows_unread_message_count(self):
         Message.objects.create(
             sender=self.outsider,

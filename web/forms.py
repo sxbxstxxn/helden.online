@@ -70,6 +70,13 @@ class MessageForm(forms.ModelForm):
             self.fields['recipient'].queryset = get_user_model().objects.exclude(pk=user.pk)
 
 
+class MessageReplyForm(forms.Form):
+    body = forms.CharField(
+        label='Antwort',
+        widget=forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}),
+    )
+
+
 class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character

@@ -18,11 +18,31 @@ from .forms import (
 	HeroGroupInviteForm,
 	MeinAccountForm,
 	MessageForm,
+	MessageReplyForm,
 )
 from .models import Character, HeroGroup, HeroGroupInvitation, HeroGroupParticipant, Message
 from .rss import get_rss_news
 
 logger = logging.getLogger(__name__)
+
+
+def build_reply_body(reply_text, original_message):
+	original_sent_at = timezone.localtime(original_message.sent_at).strftime('%d.%m.%Y %H:%M')
+	quoted_body = '\n'.join(f'> {line}' for line in original_message.body.splitlines())
+	return (
+		f'{reply_text.strip()}\n\n'
+		'--- Urspruengliche Nachricht ---\n'
+		f'Von: {original_message.sender.get_full_name() or original_message.sender.username}\n'
+		f'Datum: {original_sent_at}\n'
+		f'Betreff: {original_message.subject}\n\n'
+		f'{quoted_body}'
+	)
+
+
+def reply_subject(subject):
+	if subject.lower().startswith('re:'):
+		return subject
+	return f'Re: {subject}'
 
 class ContactForm(forms.Form):
 	name = forms.CharField(label='Name', max_length=100, widget=forms.TextInput(attrs={'class': 'heon-input'}))
@@ -428,60 +448,75 @@ def nachricht(request, pk):
 	)
 	invitation = None
 	invitation_form = None
-	if message.recipient == request.user:
-		try:
-			invitation = message.hero_group_invitation
-		except HeroGroupInvitation.DoesNotExist:
-			invitation = None
-		if invitation and invitation.status == HeroGroupInvitation.STATUS_PENDING:
-			if request.method == 'POST' and request.POST.get('action') == 'accept_group_invitation':
-				invitation_form = HeroGroupInvitationResponseForm(
-					request.POST,
-					invitation=invitation,
-					user=request.user,
-				)
-				if invitation_form.is_valid():
-					with transaction.atomic():
-						invitation = HeroGroupInvitation.objects.select_for_update().select_related('group').get(pk=invitation.pk)
-						if not invitation.group.has_room():
-							messages.error(request, 'Diese Gruppe hat bereits 8 Teilnehmer.')
-						elif HeroGroupParticipant.objects.filter(group=invitation.group, user=request.user).exists():
-							messages.error(request, 'Du nimmst bereits mit einem Charakter an dieser Gruppe teil.')
-						else:
-							character = invitation_form.cleaned_data['character']
-							HeroGroupParticipant.objects.create(
-								group=invitation.group,
-								character=character,
-								user=request.user,
-							)
-							invitation.status = HeroGroupInvitation.STATUS_ACCEPTED
-							invitation.responded_at = timezone.now()
-							invitation.character = character
-							invitation.save(update_fields=['status', 'responded_at', 'character'])
-							messages.success(request, f'Du nimmst jetzt mit {character.name} an {invitation.group.name} teil.')
-							return redirect('nachricht', pk=message.pk)
-			elif request.method == 'POST' and request.POST.get('action') == 'reject_group_invitation':
+	reply_form = None
+	try:
+		invitation = message.hero_group_invitation
+	except HeroGroupInvitation.DoesNotExist:
+		invitation = None
+	if message.recipient == request.user and invitation and invitation.status == HeroGroupInvitation.STATUS_PENDING:
+		if request.method == 'POST' and request.POST.get('action') == 'accept_group_invitation':
+			invitation_form = HeroGroupInvitationResponseForm(
+				request.POST,
+				invitation=invitation,
+				user=request.user,
+			)
+			if invitation_form.is_valid():
 				with transaction.atomic():
-					invitation = HeroGroupInvitation.objects.select_for_update().select_related('group', 'invited_by').get(pk=invitation.pk)
-					invitation.status = HeroGroupInvitation.STATUS_REJECTED
-					invitation.responded_at = timezone.now()
-					invitation.save(update_fields=['status', 'responded_at'])
-					Message.objects.create(
-						sender=request.user,
-						recipient=invitation.invited_by,
-						subject=f'Einladung zu {invitation.group.name} abgelehnt',
-						body=(
-							f'{request.user.username} hat die Einladung zur Gruppe '
-							f'"{invitation.group.name}" abgelehnt.'
-						),
-					)
-					messages.success(request, 'Du hast die Einladung abgelehnt.')
-					return redirect('nachricht', pk=message.pk)
-			else:
-				invitation_form = HeroGroupInvitationResponseForm(
-					invitation=invitation,
-					user=request.user,
+					invitation = HeroGroupInvitation.objects.select_for_update().select_related('group').get(pk=invitation.pk)
+					if not invitation.group.has_room():
+						messages.error(request, 'Diese Gruppe hat bereits 8 Teilnehmer.')
+					elif HeroGroupParticipant.objects.filter(group=invitation.group, user=request.user).exists():
+						messages.error(request, 'Du nimmst bereits mit einem Charakter an dieser Gruppe teil.')
+					else:
+						character = invitation_form.cleaned_data['character']
+						HeroGroupParticipant.objects.create(
+							group=invitation.group,
+							character=character,
+							user=request.user,
+						)
+						invitation.status = HeroGroupInvitation.STATUS_ACCEPTED
+						invitation.responded_at = timezone.now()
+						invitation.character = character
+						invitation.save(update_fields=['status', 'responded_at', 'character'])
+						messages.success(request, f'Du nimmst jetzt mit {character.name} an {invitation.group.name} teil.')
+						return redirect('nachricht', pk=message.pk)
+		elif request.method == 'POST' and request.POST.get('action') == 'reject_group_invitation':
+			with transaction.atomic():
+				invitation = HeroGroupInvitation.objects.select_for_update().select_related('group', 'invited_by').get(pk=invitation.pk)
+				invitation.status = HeroGroupInvitation.STATUS_REJECTED
+				invitation.responded_at = timezone.now()
+				invitation.save(update_fields=['status', 'responded_at'])
+				Message.objects.create(
+					sender=request.user,
+					recipient=invitation.invited_by,
+					subject=f'Einladung zu {invitation.group.name} abgelehnt',
+					body=(
+						f'{request.user.username} hat die Einladung zur Gruppe '
+						f'"{invitation.group.name}" abgelehnt.'
+					),
 				)
+				messages.success(request, 'Du hast die Einladung abgelehnt.')
+				return redirect('nachricht', pk=message.pk)
+		else:
+			invitation_form = HeroGroupInvitationResponseForm(
+				invitation=invitation,
+				user=request.user,
+			)
+	elif invitation is None:
+		if request.method == 'POST' and request.POST.get('action') == 'reply_message':
+			reply_form = MessageReplyForm(request.POST)
+			if reply_form.is_valid():
+				reply_recipient = message.sender if message.sender_id != request.user.id else message.recipient
+				Message.objects.create(
+					sender=request.user,
+					recipient=reply_recipient,
+					subject=reply_subject(message.subject),
+					body=build_reply_body(reply_form.cleaned_data['body'], message),
+				)
+				messages.success(request, 'Antwort wurde versendet.')
+				return redirect('nachricht', pk=message.pk)
+		else:
+			reply_form = MessageReplyForm()
 	if message.recipient == request.user and message.read_at is None:
 		message.read_at = timezone.now()
 		message.save(update_fields=['read_at'])
@@ -489,6 +524,7 @@ def nachricht(request, pk):
 		'message': message,
 		'invitation': invitation,
 		'invitation_form': invitation_form,
+		'reply_form': reply_form,
 	})
 
 

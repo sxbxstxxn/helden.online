@@ -57,6 +57,21 @@
                         {% endif %}
                     </div>
                 {% endif %}
+                {% if reply_form %}
+                    <div class="nachrichten-reply">
+                        <h3>Antworten</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reply_message">
+                            {{ reply_form.body.errors }}
+                            <label class="heon-text" for="{{ reply_form.body.id_for_label }}">{{ reply_form.body.label }}</label>
+                            {{ reply_form.body }}
+                            <button class="heon-button heon-blue heon-margin-top" type="submit">
+                                <span class="material-icons md-fw">reply</span> Antwort senden
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
                 <div class="heon-text-center">
                     <a href="{% url 'nachrichten' %}" class="heon-button heon-light-grey">Zurück zur Nachrichtenübersicht</a>
                     <a href="{% url 'nachricht_loeschen' message.pk %}" class="heon-button heon-red">Löschen</a>

@@ -187,6 +187,12 @@ h5 {
   font-weight: 700;
 }
 
+.nachrichten-reply {
+  border-top: 1px solid #ddd;
+  margin-top: 18px;
+  padding-top: 16px;
+}
+
 .helden-heading {
   align-items: center;
   display: flex;
