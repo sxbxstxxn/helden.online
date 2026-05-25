@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ character.name }}{% endblock title %}
+
+{% block content %}
+<div class="heon-row heon-page-row">
+    <div class="heon-col m2 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m8 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <div class="helden-heading heon-page-heading">
+                <h2><span class="material-icons md-fw">accessibility</span> {{ character.name }}</h2>
+                <div class="helden-actions">
+                    <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                        <span class="material-icons md-fw">edit</span>
+                    </a>
+                    <a href="{% url 'charakter_loeschen' character.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                        <span class="material-icons md-fw">delete</span>
+                    </a>
+                </div>
+            </div>
+            <div class="heon-container heon-white heon-padding">
+                <div class="helden-detail-layout">
+                    <div>
+                        {% if character.portrait %}
+                            <img src="{{ character.portrait.url }}" alt="{{ character.name }}" class="helden-portrait helden-portrait-detail">
+                        {% else %}
+                            <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                                <span class="material-icons md-fw">person</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p>{{ character.species }} &middot; {{ character.culture }}</p>
+                        {% if character.active_group_participations %}
+                            {% for participation in character.active_group_participations %}
+                                <p class="helden-group-status">
+                                    <span class="material-icons md-fw">family_restroom</span>
+                                    Aktiv in: {{ participation.group.name }}
+                                </p>
+                                <p>
+                                    <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave">
+                                        <span class="material-icons md-fw">logout</span> Gruppe verlassen: {{ participation.group.name }}
+                                    </a>
+                                </p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="helden-group-status">
+                                <span class="material-icons md-fw">family_restroom</span>
+                                In keiner Gruppe aktiv
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <dl class="helden-attribute-grid">
+                    <div><dt>MU</dt><dd>{{ character.courage }}</dd></div>
+                    <div><dt>KL</dt><dd>{{ character.sagacity }}</dd></div>
+                    <div><dt>IN</dt><dd>{{ character.intuition }}</dd></div>
+                    <div><dt>CH</dt><dd>{{ character.charisma }}</dd></div>
+                    <div><dt>FF</dt><dd>{{ character.dexterity }}</dd></div>
+                    <div><dt>GE</dt><dd>{{ character.agility }}</dd></div>
+                    <div><dt>KO</dt><dd>{{ character.constitution }}</dd></div>
+                    <div><dt>KK</dt><dd>{{ character.strength }}</dd></div>
+                </dl>
+
+                <div class="helden-form-actions">
+                    <a href="{% url 'helden' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m2">&nbsp;</div>
+</div>
+{% endblock content %}

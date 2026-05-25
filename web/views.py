@@ -60,6 +60,26 @@ def helden(request):
 
 
 @login_required
+def charakter_detail(request, user_id, character_name):
+	character = get_object_or_404(
+		Character.objects.prefetch_related(
+			Prefetch(
+				'group_participations',
+				queryset=HeroGroupParticipant.objects.select_related('group').filter(group__deleted_at__isnull=True),
+				to_attr='active_group_participations',
+			),
+		),
+		owner=request.user,
+		owner_id=user_id,
+		deleted_at__isnull=True,
+		name=character_name,
+	)
+	return render(request, 'charakter_detail.html', {
+		'character': character,
+	})
+
+
+@login_required
 def charakter_anlegen(request):
 	if request.method == 'POST':
 		form = CharacterForm(request.POST, request.FILES)

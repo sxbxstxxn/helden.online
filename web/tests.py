@@ -639,26 +639,28 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, 'Alrik')
         self.assertNotContains(response, 'Fremder Held')
 
-    def test_helden_renders_characters_as_single_open_accordion(self):
+    def test_helden_renders_characters_as_links_to_detail_page(self):
         self.client.force_login(self.owner)
 
         response = self.client.get(reverse('helden'))
 
-        self.assertContains(response, 'class="helden-card character-accordion"')
-        self.assertContains(response, '<summary>', html=False)
-        self.assertContains(response, '<dt>MU</dt>', html=False)
-        self.assertContains(response, 'characters[j].open = false')
+        self.assertContains(response, 'class="helden-card-link"')
+        self.assertContains(response, reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
+        self.assertNotContains(response, '<dt>MU</dt>', html=False)
+        self.assertNotContains(response, 'characters[j].open = false')
 
-    def test_helden_shows_character_portrait_in_summary_and_details(self):
+    def test_helden_shows_character_portrait_in_summary_and_detail_page(self):
         self.character.portrait = 'characters/portraits/alrik.png'
         self.character.save(update_fields=['portrait'])
         self.client.force_login(self.owner)
 
         response = self.client.get(reverse('helden'))
+        detail_response = self.client.get(reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
 
         self.assertContains(response, 'class="helden-portrait helden-portrait-summary"')
-        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, '/media/characters/portraits/alrik.png')
+        self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(detail_response, '/media/characters/portraits/alrik.png')
 
     def test_character_portrait_must_be_small_square_image(self):
         data = self.character_data()
@@ -694,11 +696,12 @@ class CharacterViewTests(TestCase):
         self.client.force_login(self.owner)
 
         response = self.client.get(reverse('helden'))
+        detail_response = self.client.get(reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
 
-        self.assertContains(response, 'Aktiv in: Siebenwind Runde')
         self.assertContains(response, 'class="helden-summary-groups"')
         self.assertContains(response, 'helden-summary-group-active')
         self.assertContains(response, 'Siebenwind Runde')
+        self.assertContains(detail_response, 'Aktiv in: Siebenwind Runde')
 
     def test_helden_shows_badge_for_each_active_group(self):
         User = get_user_model()
@@ -727,17 +730,25 @@ class CharacterViewTests(TestCase):
         self.client.force_login(self.owner)
 
         response = self.client.get(reverse('helden'))
+        detail_response = self.client.get(reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
 
         self.assertContains(response, 'Erste Runde')
         self.assertContains(response, 'Zweite Runde')
         self.assertContains(
-            response,
+            detail_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, first_participation.pk]),
         )
         self.assertContains(
-            response,
+            detail_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, second_participation.pk]),
         )
+
+    def test_character_detail_is_only_visible_to_owner(self):
+        self.client.force_login(self.outsider)
+
+        response = self.client.get(reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
+
+        self.assertEqual(response.status_code, 404)
 
     def test_character_owner_can_leave_group_and_group_owner_gets_message(self):
         group_owner = get_user_model().objects.create_user(username='group_owner_for_leave', password='testpass123')

@@ -10,6 +10,7 @@ urlpatterns = [
 	path('helden/<int:pk>/bearbeiten/', views.charakter_bearbeiten, name='charakter_bearbeiten'),
 	path('helden/<int:pk>/loeschen/', views.charakter_loeschen, name='charakter_loeschen'),
 	path('helden/<int:character_pk>/gruppe/<int:participant_pk>/verlassen/', views.charakter_gruppe_verlassen, name='charakter_gruppe_verlassen'),
+	path('helden/<int:user_id>/<str:character_name>/', views.charakter_detail, name='charakter_detail'),
 	path('gruppen/', views.gruppen, name='gruppen'),
 	path('gruppen/anlegen/', views.gruppe_anlegen, name='gruppe_anlegen'),
 	path('gruppen/<int:pk>/einladen/', views.gruppe_einladen, name='gruppe_einladen'),

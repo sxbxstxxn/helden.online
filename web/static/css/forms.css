@@ -141,21 +141,23 @@ h5 {
   border-radius: 4px;
 }
 
-.helden-card summary {
+.helden-card-link {
   align-items: center;
+  color: inherit;
   cursor: pointer;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) minmax(130px, 220px) auto;
   gap: 12px;
-  list-style: none;
   min-height: 58px;
   padding: 10px 12px;
+  text-decoration: none;
 }
 
 .helden-card summary::-webkit-details-marker {
   display: none;
 }
 
+.helden-card-link > span:nth-child(2),
 .helden-card summary > span:nth-child(2) {
   display: grid;
   gap: 3px;
@@ -227,11 +229,14 @@ h5 {
   background: #f3f3f3;
 }
 
+.helden-card-link strong,
+.helden-card-link small,
 .helden-card summary strong,
 .helden-card summary small {
   overflow-wrap: anywhere;
 }
 
+.helden-card-link small,
 .helden-card summary small {
   color: #505050;
 }
@@ -246,6 +251,12 @@ h5 {
 
 .helden-card-details {
   padding: 12px;
+}
+
+.helden-detail-layout {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
 }
 
 .helden-card-header {
@@ -538,6 +549,7 @@ h5 {
     justify-self: end;
   }
 
+  .helden-card-link,
   .helden-card summary {
     align-items: stretch;
     grid-template-columns: 48px minmax(0, 1fr) auto;
@@ -554,8 +566,13 @@ h5 {
     flex: 0 1 auto;
   }
 
+  .helden-card-link > .material-icons,
   .helden-card summary > .material-icons {
     justify-self: end;
+  }
+
+  .helden-detail-layout {
+    flex-direction: column;
   }
 
   .helden-actions,
