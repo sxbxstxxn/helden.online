@@ -32,7 +32,7 @@ def build_reply_body(reply_text, original_message):
 	return (
 		f'{reply_text.strip()}\n\n'
 		'--- Urspruengliche Nachricht ---\n'
-		f'Von: {original_message.sender.get_full_name() or original_message.sender.username}\n'
+		f'Von: {original_message.sender.username}\n'
 		f'Datum: {original_sent_at}\n'
 		f'Betreff: {original_message.subject}\n\n'
 		f'{quoted_body}'

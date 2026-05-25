@@ -22,8 +22,8 @@
             <div class="heon-container heon-white heon-padding">
                 <div style="padding-bottom:16px">
                     <p><strong>Betreff:</strong> {{ message.subject }}</p>
-                    <p><strong>Von:</strong> {{ message.sender.get_full_name|default:message.sender.username }}</p>
-                    <p><strong>An:</strong> {{ message.recipient.get_full_name|default:message.recipient.username }}</p>
+                    <p><strong>Von:</strong> {{ message.sender.username }}</p>
+                    <p><strong>An:</strong> {{ message.recipient.username }}</p>
                     <p><strong>Datum:</strong> {{ message.sent_at|date:"d.m.Y H:i" }}</p>
                     <p><strong>Status:</strong> {% if message.read_at %}Gelesen{% else %}Neu{% endif %}</p>
                     <hr>

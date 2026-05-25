@@ -35,7 +35,7 @@
                                     {% for message in inbox %}
                                         <tr class="nachrichten-clickable-row {% if not message.read_at %}nachrichten-unread{% endif %}" tabindex="0" onclick="window.location.href='{% url 'nachricht' message.pk %}'" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href='{% url 'nachricht' message.pk %}'; }">
                                             <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
-                                            <td>{{ message.sender.get_full_name|default:message.sender.username }}</td>
+                                            <td>{{ message.sender.username }}</td>
                                             <td class="nachrichten-date">{{ message.sent_at|date:"d.m.Y H:i" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -46,7 +46,7 @@
                             {% for message in inbox %}
                                 <a href="{% url 'nachricht' message.pk %}" class="nachrichten-card {% if not message.read_at %}nachrichten-unread{% endif %}">
                                     <strong>{{ message.subject }}</strong>
-                                    <span>Von: {{ message.sender.get_full_name|default:message.sender.username }}</span>
+                                    <span>Von: {{ message.sender.username }}</span>
                                     <span class="nachrichten-card-date">{{ message.sent_at|date:"d.m.Y H:i" }}</span>
                                 </a>
                             {% endfor %}
@@ -92,7 +92,7 @@
                                     {% for message in sent_messages %}
                                         <tr>
                                             <td><a href="{% url 'nachricht' message.pk %}">{{ message.subject }}</a></td>
-                                            <td>{{ message.recipient.get_full_name|default:message.recipient.username }}</td>
+                                            <td>{{ message.recipient.username }}</td>
                                             <td class="nachrichten-date">{{ message.sent_at|date:"d.m.Y H:i" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -103,7 +103,7 @@
                             {% for message in sent_messages %}
                                 <a href="{% url 'nachricht' message.pk %}" class="nachrichten-card">
                                     <strong>{{ message.subject }}</strong>
-                                    <span>An: {{ message.recipient.get_full_name|default:message.recipient.username }}</span>
+                                    <span>An: {{ message.recipient.username }}</span>
                                     <span class="nachrichten-card-date">{{ message.sent_at|date:"d.m.Y H:i" }}</span>
                                 </a>
                             {% endfor %}
