@@ -1,0 +1,19 @@
+<div class="portrait-upload">
+    {% if widget.is_initial %}
+        <div class="portrait-upload-current">
+            <img src="{{ widget.value.url }}" alt="Aktuelles Bild" class="helden-portrait helden-portrait-detail">
+            {% if not widget.required %}
+                <label class="portrait-upload-clear" for="{{ widget.checkbox_id }}">
+                    <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+                    <span class="material-icons md-fw">delete</span>
+                    Bild entfernen
+                </label>
+            {% endif %}
+        </div>
+    {% endif %}
+    <label class="heon-button heon-light-grey portrait-upload-button" for="{{ widget.attrs.id }}">
+        <span class="material-icons md-fw">upload_file</span>
+        Bild ausw&auml;hlen
+    </label>
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+</div>

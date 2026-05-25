@@ -448,6 +448,17 @@ class HeroGroupViewTests(TestCase):
             self.assertFalse(self.group.portrait.storage.exists(f'groups/{self.owner.pk}/group_{self.group.pk}.jpg'))
             self.assertFalse(os.path.exists(old_path))
 
+    def test_group_edit_form_shows_portrait_preview_and_custom_upload_button(self):
+        self.group.portrait = 'groups/portraits/phileasson.png'
+        self.group.save(update_fields=['portrait'])
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('gruppe_bearbeiten', args=[self.group.pk]))
+
+        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(response, 'Bild ausw&auml;hlen')
+        self.assertContains(response, 'Bild entfernen')
+
     def test_group_portrait_must_use_same_limits_as_character_portrait(self):
         data = self.group_data()
         valid_form = HeroGroupForm(data=data, files={'portrait': image_upload()})
@@ -967,6 +978,17 @@ class CharacterViewTests(TestCase):
             self.assertFalse(self.character.portrait)
             self.assertFalse(self.character.portrait.storage.exists(f'characters/{self.owner.pk}/char_{self.character.pk}.jpg'))
             self.assertFalse(os.path.exists(old_path))
+
+    def test_character_edit_form_shows_portrait_preview_and_custom_upload_button(self):
+        self.character.portrait = 'characters/portraits/alrik.png'
+        self.character.save(update_fields=['portrait'])
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('charakter_bearbeiten', args=[self.character.pk]))
+
+        self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(response, 'Bild ausw&auml;hlen')
+        self.assertContains(response, 'Bild entfernen')
 
     def test_character_portrait_must_be_small_square_image(self):
         data = self.character_data()

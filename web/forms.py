@@ -9,6 +9,10 @@ CHARACTER_PORTRAIT_MAX_PIXELS = 256
 CHARACTER_PORTRAIT_ALLOWED_FORMATS = {'GIF', 'JPEG', 'PNG', 'WEBP'}
 
 
+class PortraitFileInput(forms.ClearableFileInput):
+    template_name = 'widgets/portrait_file_input.html'
+
+
 def validate_square_image_upload(image_file):
     if not image_file:
         return image_file
@@ -112,7 +116,7 @@ class CharacterForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'heon-input'}),
             'species': forms.TextInput(attrs={'class': 'heon-input'}),
             'culture': forms.TextInput(attrs={'class': 'heon-input'}),
-            'portrait': forms.ClearableFileInput(attrs={'class': 'heon-input', 'accept': 'image/png,image/jpeg,image/gif,image/webp'}),
+            'portrait': PortraitFileInput(attrs={'class': 'heon-input', 'accept': 'image/png,image/jpeg,image/gif,image/webp'}),
             'courage': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
             'sagacity': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
             'intuition': forms.NumberInput(attrs={'class': 'heon-input', 'min': 1}),
@@ -139,7 +143,7 @@ class HeroGroupForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'heon-input'}),
             'description': forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}),
-            'portrait': forms.ClearableFileInput(attrs={'class': 'heon-input', 'accept': 'image/png,image/jpeg,image/gif,image/webp'}),
+            'portrait': PortraitFileInput(attrs={'class': 'heon-input', 'accept': 'image/png,image/jpeg,image/gif,image/webp'}),
         }
 
     def clean_portrait(self):

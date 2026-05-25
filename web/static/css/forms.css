@@ -303,6 +303,46 @@ textarea.heon-input {
   justify-content: center;
 }
 
+.portrait-upload {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.portrait-upload-current {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.portrait-upload-clear {
+  align-items: center;
+  color: #505050;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.portrait-upload-clear input {
+  margin: 0;
+}
+
+.portrait-upload-button {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.portrait-upload input[type="file"] {
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
 .helden-detail-intro {
   margin-bottom: 12px;
 }
