@@ -1,5 +1,7 @@
 import base64
 import io
+import os
+import tempfile
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
@@ -392,6 +394,59 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(overview_response, '/media/groups/portraits/phileasson.png')
         self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(detail_response, '/media/groups/portraits/phileasson.png')
+
+    def test_group_portrait_is_saved_as_jpg_in_group_folder(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            response = self.client.post(
+                reverse('gruppe_anlegen'),
+                self.group_data(name='Bildgruppe') | {'portrait': image_upload()},
+            )
+
+            self.assertRedirects(response, reverse('gruppen'))
+            group = HeroGroup.objects.get(name='Bildgruppe')
+            self.assertEqual(group.portrait.name, f'groups/{self.owner.pk}/group_{group.pk}.jpg')
+            with Image.open(group.portrait.path) as image:
+                self.assertEqual(image.format, 'JPEG')
+
+    def test_existing_group_portrait_is_saved_as_jpg_in_group_folder(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            response = self.client.post(
+                reverse('gruppe_bearbeiten', args=[self.group.pk]),
+                self.group_data(name=self.group.name) | {'portrait': image_upload()},
+            )
+
+            self.assertRedirects(response, reverse('gruppen'))
+            self.group.refresh_from_db()
+            self.assertEqual(self.group.portrait.name, f'groups/{self.owner.pk}/group_{self.group.pk}.jpg')
+            with Image.open(self.group.portrait.path) as image:
+                self.assertEqual(image.format, 'JPEG')
+
+    def test_group_portrait_can_be_cleared_and_file_is_deleted(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            self.client.post(
+                reverse('gruppe_bearbeiten', args=[self.group.pk]),
+                self.group_data(name=self.group.name) | {'portrait': image_upload()},
+            )
+            self.group.refresh_from_db()
+            old_path = self.group.portrait.path
+            self.assertTrue(self.group.portrait.storage.exists(self.group.portrait.name))
+
+            response = self.client.post(
+                reverse('gruppe_bearbeiten', args=[self.group.pk]),
+                self.group_data(name=self.group.name) | {'portrait-clear': 'on'},
+            )
+
+            self.assertRedirects(response, reverse('gruppen'))
+            self.group.refresh_from_db()
+            self.assertFalse(self.group.portrait)
+            self.assertFalse(self.group.portrait.storage.exists(f'groups/{self.owner.pk}/group_{self.group.pk}.jpg'))
+            self.assertFalse(os.path.exists(old_path))
 
     def test_group_portrait_must_use_same_limits_as_character_portrait(self):
         data = self.group_data()
@@ -859,6 +914,59 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, '/media/characters/portraits/alrik.png')
         self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(detail_response, '/media/characters/portraits/alrik.png')
+
+    def test_character_portrait_is_saved_as_jpg_in_character_folder(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            response = self.client.post(
+                reverse('charakter_anlegen'),
+                self.character_data(name='Bildheld') | {'portrait': image_upload()},
+            )
+
+            self.assertRedirects(response, reverse('helden'))
+            character = Character.objects.get(name='Bildheld')
+            self.assertEqual(character.portrait.name, f'characters/{self.owner.pk}/char_{character.pk}.jpg')
+            with Image.open(character.portrait.path) as image:
+                self.assertEqual(image.format, 'JPEG')
+
+    def test_existing_character_portrait_is_saved_as_jpg_in_character_folder(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            response = self.client.post(
+                reverse('charakter_bearbeiten', args=[self.character.pk]),
+                self.character_data(name=self.character.name) | {'portrait': image_upload()},
+            )
+
+            self.assertRedirects(response, reverse('helden'))
+            self.character.refresh_from_db()
+            self.assertEqual(self.character.portrait.name, f'characters/{self.owner.pk}/char_{self.character.pk}.jpg')
+            with Image.open(self.character.portrait.path) as image:
+                self.assertEqual(image.format, 'JPEG')
+
+    def test_character_portrait_can_be_cleared_and_file_is_deleted(self):
+        self.client.force_login(self.owner)
+
+        with tempfile.TemporaryDirectory() as media_root, self.settings(MEDIA_ROOT=media_root):
+            self.client.post(
+                reverse('charakter_bearbeiten', args=[self.character.pk]),
+                self.character_data(name=self.character.name) | {'portrait': image_upload()},
+            )
+            self.character.refresh_from_db()
+            old_path = self.character.portrait.path
+            self.assertTrue(self.character.portrait.storage.exists(self.character.portrait.name))
+
+            response = self.client.post(
+                reverse('charakter_bearbeiten', args=[self.character.pk]),
+                self.character_data(name=self.character.name) | {'portrait-clear': 'on'},
+            )
+
+            self.assertRedirects(response, reverse('helden'))
+            self.character.refresh_from_db()
+            self.assertFalse(self.character.portrait)
+            self.assertFalse(self.character.portrait.storage.exists(f'characters/{self.owner.pk}/char_{self.character.pk}.jpg'))
+            self.assertFalse(os.path.exists(old_path))
 
     def test_character_portrait_must_be_small_square_image(self):
         data = self.character_data()

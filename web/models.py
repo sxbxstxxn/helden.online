@@ -1,7 +1,68 @@
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
+from io import BytesIO
+
+
+def character_portrait_upload_to(instance, filename):
+    if instance.pk:
+        return instance.portrait_storage_name
+    return f'characters/{instance.owner_id or "unknown"}/temporary/{filename}'
+
+
+def group_portrait_upload_to(instance, filename):
+    if instance.pk:
+        return instance.portrait_storage_name
+    return f'groups/{instance.owner_id or "unknown"}/temporary/{filename}'
+
+
+def save_portrait_as_jpg(instance, field_name, target_name):
+    image_field = getattr(instance, field_name)
+    if not image_field:
+        return
+
+    storage = image_field.storage
+    source_name = image_field.name
+    try:
+        with storage.open(source_name, 'rb') as source_file:
+            from PIL import Image
+
+            image = Image.open(source_file)
+            image.load()
+    except (FileNotFoundError, OSError):
+        return
+    if source_name == target_name and image.format == 'JPEG':
+        return
+
+    if image.mode not in ('RGB', 'L'):
+        background = Image.new('RGB', image.size, (255, 255, 255))
+        if image.mode == 'RGBA':
+            background.paste(image, mask=image.getchannel('A'))
+        else:
+            background.paste(image.convert('RGBA'), mask=image.convert('RGBA').getchannel('A'))
+        image = background
+    else:
+        image = image.convert('RGB')
+
+    content = BytesIO()
+    image.save(content, format='JPEG', quality=90, optimize=True)
+    content.seek(0)
+
+    if storage.exists(target_name):
+        storage.delete(target_name)
+    storage.save(target_name, ContentFile(content.read()))
+    if source_name != target_name and storage.exists(source_name):
+        storage.delete(source_name)
+
+    setattr(instance, field_name, target_name)
+    instance.__class__.objects.filter(pk=instance.pk).update(**{field_name: target_name})
+
+
+def delete_portrait_file(storage, name):
+    if name and storage.exists(name):
+        storage.delete(name)
 
 
 class Message(models.Model):
@@ -57,7 +118,7 @@ class Character(models.Model):
     name = models.CharField(max_length=120)
     species = models.CharField(max_length=120)
     culture = models.CharField(max_length=120)
-    portrait = models.ImageField(upload_to='characters/portraits/', null=True, blank=True)
+    portrait = models.ImageField(upload_to=character_portrait_upload_to, null=True, blank=True)
     courage = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     sagacity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
     intuition = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
@@ -76,6 +137,25 @@ class Character(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def portrait_storage_name(self):
+        return f'characters/{self.owner_id}/char_{self.pk}.jpg'
+
+    def save(self, *args, **kwargs):
+        old_portrait_name = None
+        if self.pk:
+            try:
+                old_portrait_name = self.__class__.objects.only('portrait').get(pk=self.pk).portrait.name
+            except self.__class__.DoesNotExist:
+                old_portrait_name = None
+        super().save(*args, **kwargs)
+        if self.portrait and self.pk:
+            save_portrait_as_jpg(self, 'portrait', self.portrait_storage_name)
+            if old_portrait_name and old_portrait_name != self.portrait.name:
+                delete_portrait_file(self.portrait.storage, old_portrait_name)
+        elif old_portrait_name:
+            delete_portrait_file(self.portrait.storage, old_portrait_name)
+
     def mark_deleted(self):
         if self.deleted_at is None:
             self.deleted_at = timezone.now()
@@ -92,7 +172,7 @@ class HeroGroup(models.Model):
     )
     name = models.CharField(max_length=120)
     description = models.TextField()
-    portrait = models.ImageField(upload_to='groups/portraits/', null=True, blank=True)
+    portrait = models.ImageField(upload_to=group_portrait_upload_to, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
@@ -102,6 +182,25 @@ class HeroGroup(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def portrait_storage_name(self):
+        return f'groups/{self.owner_id}/group_{self.pk}.jpg'
+
+    def save(self, *args, **kwargs):
+        old_portrait_name = None
+        if self.pk:
+            try:
+                old_portrait_name = self.__class__.objects.only('portrait').get(pk=self.pk).portrait.name
+            except self.__class__.DoesNotExist:
+                old_portrait_name = None
+        super().save(*args, **kwargs)
+        if self.portrait and self.pk:
+            save_portrait_as_jpg(self, 'portrait', self.portrait_storage_name)
+            if old_portrait_name and old_portrait_name != self.portrait.name:
+                delete_portrait_file(self.portrait.storage, old_portrait_name)
+        elif old_portrait_name:
+            delete_portrait_file(self.portrait.storage, old_portrait_name)
 
     def mark_deleted(self):
         if self.deleted_at is None:
