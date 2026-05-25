@@ -374,13 +374,13 @@ h5 {
   color: inherit;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(0, 1fr) minmax(120px, 170px) minmax(100px, 140px) auto;
+  grid-template-columns: 48px minmax(0, 1fr) minmax(120px, 170px) minmax(100px, 140px) auto;
   min-height: 58px;
   padding: 12px;
   text-decoration: none;
 }
 
-.gruppen-card-link > span:first-child {
+.gruppen-card-link > span:nth-child(2) {
   display: grid;
   gap: 3px;
   min-width: 0;
@@ -408,6 +408,12 @@ h5 {
 
 .gruppen-detail-summary {
   margin-bottom: 16px;
+}
+
+.gruppen-detail-layout {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
 }
 
 .gruppen-detail-summary p {
@@ -631,7 +637,7 @@ h5 {
   }
 
   .gruppen-card-link {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
   }
 
   .gruppen-summary-meta {
@@ -641,6 +647,10 @@ h5 {
 
   .gruppen-card-link > .material-icons {
     justify-self: end;
+  }
+
+  .gruppen-detail-layout {
+    flex-direction: column;
   }
 
   .gruppen-participant-tile,

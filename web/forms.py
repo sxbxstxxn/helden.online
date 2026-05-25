@@ -9,6 +9,35 @@ CHARACTER_PORTRAIT_MAX_PIXELS = 256
 CHARACTER_PORTRAIT_ALLOWED_FORMATS = {'GIF', 'JPEG', 'PNG', 'WEBP'}
 
 
+def validate_square_image_upload(image_file):
+    if not image_file:
+        return image_file
+    if getattr(image_file, 'size', 0) > CHARACTER_PORTRAIT_MAX_BYTES:
+        raise forms.ValidationError('Das Bild darf maximal 200 KB gross sein.')
+
+    try:
+        from PIL import Image, UnidentifiedImageError
+
+        image = Image.open(image_file)
+        image.verify()
+    except ImportError as exc:
+        raise forms.ValidationError('Bild-Uploads sind aktuell nicht verfuegbar.') from exc
+    except (UnidentifiedImageError, OSError) as exc:
+        raise forms.ValidationError('Bitte lade ein gueltiges Bild hoch.') from exc
+
+    if image.format not in CHARACTER_PORTRAIT_ALLOWED_FORMATS:
+        raise forms.ValidationError('Erlaubt sind PNG, JPG, GIF oder WEBP.')
+
+    width, height = image.size
+    if width != height:
+        raise forms.ValidationError('Das Bild muss quadratisch sein.')
+    if width > CHARACTER_PORTRAIT_MAX_PIXELS or height > CHARACTER_PORTRAIT_MAX_PIXELS:
+        raise forms.ValidationError('Das Bild darf maximal 256 x 256 Pixel gross sein.')
+
+    image_file.seek(0)
+    return image_file
+
+
 class MeinAccountForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
@@ -88,47 +117,26 @@ class CharacterForm(forms.ModelForm):
         }
 
     def clean_portrait(self):
-        portrait = self.cleaned_data.get('portrait')
-        if not portrait:
-            return portrait
-        if getattr(portrait, 'size', 0) > CHARACTER_PORTRAIT_MAX_BYTES:
-            raise forms.ValidationError('Das Bild darf maximal 200 KB gross sein.')
-
-        try:
-            from PIL import Image, UnidentifiedImageError
-
-            image = Image.open(portrait)
-            image.verify()
-        except ImportError as exc:
-            raise forms.ValidationError('Bild-Uploads sind aktuell nicht verfuegbar.') from exc
-        except (UnidentifiedImageError, OSError) as exc:
-            raise forms.ValidationError('Bitte lade ein gueltiges Bild hoch.') from exc
-
-        if image.format not in CHARACTER_PORTRAIT_ALLOWED_FORMATS:
-            raise forms.ValidationError('Erlaubt sind PNG, JPG, GIF oder WEBP.')
-
-        width, height = image.size
-        if width != height:
-            raise forms.ValidationError('Das Bild muss quadratisch sein.')
-        if width > CHARACTER_PORTRAIT_MAX_PIXELS or height > CHARACTER_PORTRAIT_MAX_PIXELS:
-            raise forms.ValidationError('Das Bild darf maximal 256 x 256 Pixel gross sein.')
-
-        portrait.seek(0)
-        return portrait
+        return validate_square_image_upload(self.cleaned_data.get('portrait'))
 
 
 class HeroGroupForm(forms.ModelForm):
     class Meta:
         model = HeroGroup
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'portrait']
         labels = {
             'name': 'Name',
             'description': 'Beschreibung',
+            'portrait': 'Bild',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'heon-input'}),
             'description': forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}),
+            'portrait': forms.ClearableFileInput(attrs={'class': 'heon-input', 'accept': 'image/png,image/jpeg,image/gif,image/webp'}),
         }
+
+    def clean_portrait(self):
+        return validate_square_image_upload(self.cleaned_data.get('portrait'))
 
 
 class HeroGroupInviteForm(forms.Form):

@@ -12,7 +12,7 @@ from PIL import Image
 from smtplib import SMTPException
 from unittest.mock import patch
 
-from .forms import CharacterForm
+from .forms import CharacterForm, HeroGroupForm
 from .models import Character, HeroGroup, HeroGroupInvitation, HeroGroupParticipant, Message
 from .rss import get_rss_news
 
@@ -314,6 +314,38 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(response, 'Phileassons Erben')
         self.assertContains(response, reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
         self.assertNotContains(response, 'Fremde Runde')
+
+    def test_gruppen_shows_group_portrait_in_overview_and_detail(self):
+        self.group.portrait = 'groups/portraits/phileasson.png'
+        self.group.save(update_fields=['portrait'])
+        self.client.force_login(self.owner)
+
+        overview_response = self.client.get(reverse('gruppen'))
+        detail_response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
+        self.assertContains(overview_response, 'class="helden-portrait helden-portrait-summary"')
+        self.assertContains(overview_response, '/media/groups/portraits/phileasson.png')
+        self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
+        self.assertContains(detail_response, '/media/groups/portraits/phileasson.png')
+
+    def test_group_portrait_must_use_same_limits_as_character_portrait(self):
+        data = self.group_data()
+        valid_form = HeroGroupForm(data=data, files={'portrait': image_upload()})
+        wide_form = HeroGroupForm(data=data, files={'portrait': image_upload(size=(128, 96))})
+        large_pixel_form = HeroGroupForm(data=data, files={'portrait': image_upload(size=(512, 512))})
+        large_file_form = HeroGroupForm(data=data, files={'portrait': image_upload(
+            name='large.bmp',
+            size=(300, 300),
+            image_format='BMP',
+        )})
+
+        self.assertTrue(valid_form.is_valid())
+        self.assertFalse(wide_form.is_valid())
+        self.assertIn('quadratisch', str(wide_form.errors['portrait']))
+        self.assertFalse(large_pixel_form.is_valid())
+        self.assertIn('256 x 256', str(large_pixel_form.errors['portrait']))
+        self.assertFalse(large_file_form.is_valid())
+        self.assertIn('200 KB', str(large_file_form.errors['portrait']))
 
     def test_group_detail_is_only_visible_to_owner(self):
         self.client.force_login(self.outsider)

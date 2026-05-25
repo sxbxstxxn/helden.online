@@ -23,14 +23,25 @@
                 {% endif %}
             </div>
             <div class="heon-container heon-white heon-padding">
-                <div class="gruppen-detail-summary">
-                    <p>{{ group.description|linebreaksbr }}</p>
-                    <p>{{ group.participants.count }} von 8 Teilnehmern</p>
-                    {% if group.pending_invitations %}
-                        <p>{{ group.pending_invitations|length }} User eingeladen, noch {{ group.available_invitation_count }} Einladungen frei</p>
-                    {% else %}
-                        <p>Noch {{ group.available_invitation_count }} Einladungen frei</p>
-                    {% endif %}
+                <div class="gruppen-detail-summary gruppen-detail-layout">
+                    <div>
+                        {% if group.portrait %}
+                            <img src="{{ group.portrait.url }}" alt="{{ group.name }}" class="helden-portrait helden-portrait-detail">
+                        {% else %}
+                            <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                                <span class="material-icons md-fw">family_restroom</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p>{{ group.description|linebreaksbr }}</p>
+                        <p>{{ group.participants.count }} von 8 Teilnehmern</p>
+                        {% if group.pending_invitations %}
+                            <p>{{ group.pending_invitations|length }} User eingeladen, noch {{ group.available_invitation_count }} Einladungen frei</p>
+                        {% else %}
+                            <p>Noch {{ group.available_invitation_count }} Einladungen frei</p>
+                        {% endif %}
+                    </div>
                 </div>
                 <datalist id="invite-usernames">
                     {% for username in invite_usernames %}

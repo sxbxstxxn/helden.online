@@ -236,7 +236,7 @@ def gruppe_detail(request, user_id, group_name):
 @login_required
 def gruppe_anlegen(request):
 	if request.method == 'POST':
-		form = HeroGroupForm(request.POST)
+		form = HeroGroupForm(request.POST, request.FILES)
 		if form.is_valid():
 			group = form.save(commit=False)
 			group.owner = request.user
@@ -261,7 +261,7 @@ def gruppe_bearbeiten(request, pk):
 		pk=pk,
 	)
 	if request.method == 'POST':
-		form = HeroGroupForm(request.POST, instance=group)
+		form = HeroGroupForm(request.POST, request.FILES, instance=group)
 		if form.is_valid():
 			form.save()
 			messages.success(request, 'Gruppe erfolgreich gespeichert.')

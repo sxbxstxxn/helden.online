@@ -21,6 +21,13 @@
                         {% for group in groups %}
                             <article class="gruppen-card">
                                 <a class="gruppen-card-link" href="{% url 'gruppe_detail' group.owner_id group.name %}">
+                                    {% if group.portrait %}
+                                        <img src="{{ group.portrait.url }}" alt="{{ group.name }}" class="helden-portrait helden-portrait-summary">
+                                    {% else %}
+                                        <span class="helden-portrait helden-portrait-placeholder" aria-hidden="true">
+                                            <span class="material-icons md-fw">family_restroom</span>
+                                        </span>
+                                    {% endif %}
                                     <span>
                                         <strong>{{ group.name }}</strong>
                                         <small>{{ group.description|linebreaksbr }}</small>
