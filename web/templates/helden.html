@@ -24,6 +24,24 @@
                                     <div>
                                         <h3>{{ character.name }}</h3>
                                         <p>{{ character.species }} &middot; {{ character.culture }}</p>
+                                        {% if character.active_group_participations %}
+                                            {% for participation in character.active_group_participations %}
+                                                <p class="helden-group-status">
+                                                    <span class="material-icons md-fw">family_restroom</span>
+                                                    Aktiv in: {{ participation.group.name }}
+                                                </p>
+                                                <p>
+                                                    <a href="{% url 'charakter_gruppe_verlassen' character.pk %}" class="heon-button heon-red helden-group-leave">
+                                                        <span class="material-icons md-fw">logout</span> Gruppe verlassen
+                                                    </a>
+                                                </p>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="helden-group-status">
+                                                <span class="material-icons md-fw">family_restroom</span>
+                                                In keiner Gruppe aktiv
+                                            </p>
+                                        {% endif %}
                                     </div>
                                     <div class="helden-actions">
                                         <a href="{% url 'charakter_bearbeiten' character.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">

@@ -153,6 +153,21 @@ h5 {
   margin: 4px 0 0;
 }
 
+.helden-group-status {
+  align-items: center;
+  color: #505050;
+  display: flex;
+  gap: 4px;
+}
+
+.helden-group-status .material-icons {
+  font-size: 18px;
+}
+
+.helden-group-leave {
+  margin-top: 4px;
+}
+
 .helden-actions {
   display: flex;
   flex: 0 0 auto;
@@ -254,6 +269,68 @@ h5 {
   gap: 8px;
 }
 
+.gruppen-participants {
+  margin-top: 16px;
+}
+
+.gruppen-participant-tile {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.gruppen-participant-tile summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  list-style: none;
+  min-height: 58px;
+  padding: 10px 12px;
+}
+
+.gruppen-participant-tile summary::-webkit-details-marker {
+  display: none;
+}
+
+.gruppen-participant-tile summary span:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.gruppen-participant-tile summary strong,
+.gruppen-participant-tile summary small {
+  overflow-wrap: anywhere;
+}
+
+.gruppen-participant-tile summary small {
+  color: #505050;
+}
+
+.gruppen-participant-tile[open] summary {
+  border-bottom: 1px solid #ddd;
+}
+
+.gruppen-participant-tile[open] summary .material-icons {
+  transform: rotate(180deg);
+}
+
+.gruppen-participant-details {
+  padding: 12px;
+}
+
+.gruppen-participant-meta {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.gruppen-participant-meta p {
+  margin: 0;
+}
+
 .gruppen-empty {
   padding: 24px 12px;
   text-align: center;
@@ -334,6 +411,7 @@ h5 {
   .helden-heading,
   .helden-card-header,
   .helden-form-actions,
+  .gruppen-participant-meta,
   .gruppen-heading,
   .gruppen-card-header,
   .gruppen-form-actions {

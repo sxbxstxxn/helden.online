@@ -9,7 +9,7 @@ from django.urls import reverse
 from smtplib import SMTPException
 from unittest.mock import patch
 
-from .models import Character, HeroGroup, Message
+from .models import Character, HeroGroup, HeroGroupInvitation, HeroGroupParticipant, Message
 from .rss import get_rss_news
 
 
@@ -230,10 +230,25 @@ class HeroGroupViewTests(TestCase):
         User = get_user_model()
         self.owner = User.objects.create_user(username='group_owner', password='testpass123')
         self.outsider = User.objects.create_user(username='group_outsider', password='testpass123')
+        self.invited = User.objects.create_user(username='invited_user', password='testpass123')
         self.group = HeroGroup.objects.create(
             owner=self.owner,
             name='Phileassons Erben',
             description='Eine Reisegruppe.',
+        )
+        self.character = Character.objects.create(
+            owner=self.invited,
+            name='Tsaiane',
+            species='Mensch',
+            culture='Gareth',
+            courage=12,
+            sagacity=12,
+            intuition=12,
+            charisma=12,
+            dexterity=12,
+            agility=12,
+            constitution=12,
+            strength=12,
         )
 
     def group_data(self, **overrides):
@@ -301,6 +316,210 @@ class HeroGroupViewTests(TestCase):
         self.assertIsNotNone(self.group.deleted_at)
         self.assertTrue(HeroGroup.objects.filter(pk=self.group.pk).exists())
         self.assertNotContains(self.client.get(reverse('gruppen')), 'Phileassons Erben')
+
+    def test_owner_can_invite_user_by_username(self):
+        self.client.force_login(self.owner)
+
+        response = self.client.post(reverse('gruppe_einladen', args=[self.group.pk]), {
+            'username': self.invited.username,
+        })
+
+        self.assertRedirects(response, reverse('gruppen'))
+        invitation = HeroGroupInvitation.objects.get(group=self.group, invited_user=self.invited)
+        self.assertEqual(invitation.invited_by, self.owner)
+        self.assertIsNotNone(invitation.message)
+        self.assertEqual(invitation.message.recipient, self.invited)
+        self.assertIn('Phileassons Erben', invitation.message.subject)
+
+    def test_gruppen_shows_username_autocomplete_and_pending_slots(self):
+        Message.objects.create(
+            sender=self.owner,
+            recipient=self.invited,
+            subject='Einladung',
+            body='Bitte waehle einen Charakter.',
+        )
+        HeroGroupInvitation.objects.create(
+            group=self.group,
+            invited_user=self.invited,
+            invited_by=self.owner,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('gruppen'))
+
+        self.assertContains(response, 'list="invite-usernames"')
+        self.assertContains(response, f'value="{self.invited.username}"')
+        self.assertContains(response, '1 User eingeladen, noch 7 Einladungen frei')
+        self.assertContains(response, self.invited.username)
+
+    def test_invited_user_accepts_invitation_with_character_from_message(self):
+        message = Message.objects.create(
+            sender=self.owner,
+            recipient=self.invited,
+            subject='Einladung',
+            body='Bitte waehle einen Charakter.',
+        )
+        invitation = HeroGroupInvitation.objects.create(
+            group=self.group,
+            invited_user=self.invited,
+            invited_by=self.owner,
+            message=message,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.post(reverse('nachricht', args=[message.pk]), {
+            'action': 'accept_group_invitation',
+            'character': self.character.pk,
+        })
+
+        self.assertRedirects(response, reverse('nachricht', args=[message.pk]))
+        participant = HeroGroupParticipant.objects.get(group=self.group, user=self.invited)
+        self.assertEqual(participant.character, self.character)
+        invitation.refresh_from_db()
+        self.assertEqual(invitation.status, HeroGroupInvitation.STATUS_ACCEPTED)
+        self.assertEqual(invitation.character, self.character)
+
+    def test_invited_user_rejects_invitation_and_owner_gets_message(self):
+        message = Message.objects.create(
+            sender=self.owner,
+            recipient=self.invited,
+            subject='Einladung',
+            body='Bitte waehle einen Charakter.',
+        )
+        invitation = HeroGroupInvitation.objects.create(
+            group=self.group,
+            invited_user=self.invited,
+            invited_by=self.owner,
+            message=message,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.post(reverse('nachricht', args=[message.pk]), {
+            'action': 'reject_group_invitation',
+        })
+
+        self.assertRedirects(response, reverse('nachricht', args=[message.pk]))
+        invitation.refresh_from_db()
+        self.assertEqual(invitation.status, HeroGroupInvitation.STATUS_REJECTED)
+        owner_message = Message.objects.get(recipient=self.owner, subject__contains='abgelehnt')
+        self.assertEqual(owner_message.sender, self.invited)
+        self.assertIn('Phileassons Erben', owner_message.body)
+
+    def test_user_can_participate_only_once_per_group(self):
+        HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        second_character = Character.objects.create(
+            owner=self.invited,
+            name='Boronja',
+            species='Mensch',
+            culture='Punin',
+            courage=12,
+            sagacity=12,
+            intuition=12,
+            charisma=12,
+            dexterity=12,
+            agility=12,
+            constitution=12,
+            strength=12,
+        )
+        message = Message.objects.create(
+            sender=self.owner,
+            recipient=self.invited,
+            subject='Einladung',
+            body='Bitte waehle einen Charakter.',
+        )
+        HeroGroupInvitation.objects.create(
+            group=self.group,
+            invited_user=self.invited,
+            invited_by=self.owner,
+            message=message,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.post(reverse('nachricht', args=[message.pk]), {
+            'action': 'accept_group_invitation',
+            'character': second_character.pk,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(HeroGroupParticipant.objects.filter(group=self.group, user=self.invited).count(), 1)
+
+    def test_group_acceptance_is_limited_to_eight_participants(self):
+        User = get_user_model()
+        for index in range(8):
+            user = User.objects.create_user(username=f'participant_{index}', password='testpass123')
+            character = Character.objects.create(
+                owner=user,
+                name=f'Held {index}',
+                species='Mensch',
+                culture='Gareth',
+                courage=12,
+                sagacity=12,
+                intuition=12,
+                charisma=12,
+                dexterity=12,
+                agility=12,
+                constitution=12,
+                strength=12,
+            )
+            HeroGroupParticipant.objects.create(group=self.group, user=user, character=character)
+        message = Message.objects.create(
+            sender=self.owner,
+            recipient=self.invited,
+            subject='Einladung',
+            body='Bitte waehle einen Charakter.',
+        )
+        HeroGroupInvitation.objects.create(
+            group=self.group,
+            invited_user=self.invited,
+            invited_by=self.owner,
+            message=message,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.post(reverse('nachricht', args=[message.pk]), {
+            'action': 'accept_group_invitation',
+            'character': self.character.pk,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(HeroGroupParticipant.objects.filter(group=self.group, user=self.invited).exists())
+
+    def test_owner_can_remove_participant_and_user_gets_message(self):
+        participant = HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        confirm_response = self.client.get(reverse('gruppen_teilnehmer_entfernen', args=[self.group.pk, participant.pk]))
+        self.assertContains(confirm_response, 'Teilnehmer entfernen')
+        self.assertTrue(HeroGroupParticipant.objects.filter(pk=participant.pk).exists())
+
+        response = self.client.post(reverse('gruppen_teilnehmer_entfernen', args=[self.group.pk, participant.pk]))
+
+        self.assertRedirects(response, reverse('gruppen'))
+        self.assertFalse(HeroGroupParticipant.objects.filter(pk=participant.pk).exists())
+        message = Message.objects.get(recipient=self.invited, subject__contains='wurde aus')
+        self.assertEqual(message.sender, self.owner)
+        self.assertIn('Tsaiane', message.body)
+
+    def test_outsider_cannot_remove_participant(self):
+        participant = HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.outsider)
+
+        response = self.client.post(reverse('gruppen_teilnehmer_entfernen', args=[self.group.pk, participant.pk]))
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(HeroGroupParticipant.objects.filter(pk=participant.pk).exists())
 
 
 class CharacterViewTests(TestCase):
@@ -371,6 +590,69 @@ class CharacterViewTests(TestCase):
 
         self.assertContains(response, 'Alrik')
         self.assertNotContains(response, 'Fremder Held')
+
+    def test_helden_shows_active_group_for_character(self):
+        group_owner = get_user_model().objects.create_user(username='group_owner_for_character', password='testpass123')
+        group = HeroGroup.objects.create(
+            owner=group_owner,
+            name='Siebenwind Runde',
+            description='Aktive Gruppe.',
+        )
+        HeroGroupParticipant.objects.create(
+            group=group,
+            user=self.owner,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        response = self.client.get(reverse('helden'))
+
+        self.assertContains(response, 'Aktiv in: Siebenwind Runde')
+
+    def test_character_owner_can_leave_group_and_group_owner_gets_message(self):
+        group_owner = get_user_model().objects.create_user(username='group_owner_for_leave', password='testpass123')
+        group = HeroGroup.objects.create(
+            owner=group_owner,
+            name='Horasische Runde',
+            description='Aktive Gruppe.',
+        )
+        participation = HeroGroupParticipant.objects.create(
+            group=group,
+            user=self.owner,
+            character=self.character,
+        )
+        self.client.force_login(self.owner)
+
+        confirm_response = self.client.get(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+        self.assertContains(confirm_response, 'Gruppe verlassen')
+        self.assertTrue(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
+
+        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+
+        self.assertRedirects(response, reverse('helden'))
+        self.assertFalse(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
+        message = Message.objects.get(recipient=group_owner, subject__contains='hat Horasische Runde verlassen')
+        self.assertEqual(message.sender, self.owner)
+        self.assertIn('Alrik', message.body)
+
+    def test_outsider_cannot_leave_group_for_foreign_character(self):
+        group_owner = get_user_model().objects.create_user(username='group_owner_for_foreign_leave', password='testpass123')
+        group = HeroGroup.objects.create(
+            owner=group_owner,
+            name='Fremde Gruppe',
+            description='Aktive Gruppe.',
+        )
+        participation = HeroGroupParticipant.objects.create(
+            group=group,
+            user=self.owner,
+            character=self.character,
+        )
+        self.client.force_login(self.outsider)
+
+        response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk]))
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
 
     def test_user_can_edit_own_character(self):
         self.client.force_login(self.owner)

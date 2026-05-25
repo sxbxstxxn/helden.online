@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import Character, HeroGroup, Message
+from .models import Character, HeroGroup, HeroGroupParticipant, Message
 
 
 class MeinAccountForm(forms.ModelForm):
@@ -92,3 +92,65 @@ class HeroGroupForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'heon-input'}),
             'description': forms.Textarea(attrs={'class': 'heon-input', 'rows': 6}),
         }
+
+
+class HeroGroupInviteForm(forms.Form):
+    username = forms.CharField(
+        label='Username',
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'heon-input', 'placeholder': 'Username'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.group = kwargs.pop('group')
+        self.sender = kwargs.pop('sender')
+        super().__init__(*args, **kwargs)
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].strip()
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist as exc:
+            raise forms.ValidationError('Diesen User gibt es nicht.') from exc
+
+        if user == self.sender:
+            raise forms.ValidationError('Du kannst dich nicht selbst einladen.')
+        if not self.group.can_invite_more():
+            raise forms.ValidationError('Diese Gruppe hat keine freien Einladungsplaetze mehr.')
+        if HeroGroupParticipant.objects.filter(group=self.group, user=user).exists():
+            raise forms.ValidationError('Dieser User nimmt bereits an der Gruppe teil.')
+        if self.group.invitations.filter(invited_user=user, status='pending').exists():
+            raise forms.ValidationError('Fuer diesen User gibt es bereits eine offene Einladung.')
+
+        self.cleaned_data['user'] = user
+        return username
+
+
+class HeroGroupInvitationResponseForm(forms.Form):
+    character = forms.ModelChoiceField(
+        queryset=Character.objects.none(),
+        label='Charakter',
+        widget=forms.Select(attrs={'class': 'heon-input'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.invitation = kwargs.pop('invitation')
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['character'].queryset = Character.objects.filter(
+            owner=self.user,
+            deleted_at__isnull=True,
+        ).exclude(
+            group_participations__group=self.invitation.group,
+        )
+
+    def clean_character(self):
+        character = self.cleaned_data['character']
+        if character.owner_id != self.user.id:
+            raise forms.ValidationError('Du kannst nur eigene Charaktere auswaehlen.')
+        if not self.invitation.group.has_room():
+            raise forms.ValidationError('Diese Gruppe hat bereits 8 Teilnehmer.')
+        if HeroGroupParticipant.objects.filter(group=self.invitation.group, user=self.user).exists():
+            raise forms.ValidationError('Du nimmst bereits mit einem Charakter an dieser Gruppe teil.')
+        return character

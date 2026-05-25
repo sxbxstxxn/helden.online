@@ -22,6 +22,41 @@
                     <hr>
                     <p>{{ message.body|linebreaksbr }}</p>
                 </div>
+                {% if invitation %}
+                    <div class="heon-panel heon-light-grey heon-padding">
+                        {% if invitation.status == 'pending' %}
+                            <h3>Gruppeneinladung beantworten</h3>
+                            {% if invitation_form.fields.character.queryset %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="accept_group_invitation">
+                                    {{ invitation_form.non_field_errors }}
+                                    <label class="heon-text" for="{{ invitation_form.character.id_for_label }}">{{ invitation_form.character.label }}</label>
+                                    {{ invitation_form.character.errors }}
+                                    {{ invitation_form.character }}
+                                    <div style="padding-top:12px">
+                                        <button class="heon-button heon-blue" type="submit">
+                                            <span class="material-icons md-fw">check</span> Einladung annehmen
+                                        </button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <p>Du hast keinen verfuegbaren Charakter fuer diese Gruppe.</p>
+                            {% endif %}
+                            <form method="post" style="margin-top:12px">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="reject_group_invitation">
+                                <button class="heon-button heon-red" type="submit">
+                                    <span class="material-icons md-fw">close</span> Einladung ablehnen
+                                </button>
+                            </form>
+                        {% elif invitation.status == 'rejected' %}
+                            <p>Diese Einladung wurde abgelehnt.</p>
+                        {% else %}
+                            <p>Diese Einladung wurde bereits angenommen.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 <div class="heon-text-center">
                     <a href="{% url 'nachrichten' %}" class="heon-button heon-light-grey">Zurück zur Nachrichtenübersicht</a>
                     <a href="{% url 'nachricht_loeschen' message.pk %}" class="heon-button heon-red">Löschen</a>
