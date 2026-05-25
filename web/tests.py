@@ -1252,3 +1252,15 @@ class ContactFormTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['sent'])
         self.assertTrue(response.context['mail_error'])
+
+
+class LegalPageTests(TestCase):
+    @override_settings(LEGAL_EMAIL='mail@helden.online', CONTACT_EMAIL='kontakt@example.com')
+    def test_legal_pages_use_legal_email(self):
+        impressum_response = self.client.get(reverse('impressum'))
+        datenschutz_response = self.client.get(reverse('datenschutz'))
+
+        self.assertContains(impressum_response, 'mail@helden.online')
+        self.assertContains(datenschutz_response, 'mail@helden.online')
+        self.assertNotContains(impressum_response, 'kontakt@example.com')
+        self.assertNotContains(datenschutz_response, 'kontakt@example.com')

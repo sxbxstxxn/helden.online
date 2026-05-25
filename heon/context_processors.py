@@ -4,7 +4,8 @@ from web.models import Message
 
 def contact_email(request):
     return {
-        'CONTACT_EMAIL': getattr(settings, 'CONTACT_EMAIL', '')
+        'CONTACT_EMAIL': getattr(settings, 'CONTACT_EMAIL', ''),
+        'LEGAL_EMAIL': getattr(settings, 'LEGAL_EMAIL', 'mail@helden.online'),
     }
 
 
