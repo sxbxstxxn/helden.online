@@ -216,15 +216,19 @@ def gruppe_detail(request, user_id, group_name):
 				).select_related('invited_user'),
 				to_attr='pending_invitations',
 			),
-		),
-		owner=request.user,
+		).filter(
+			Q(owner=request.user) |
+			Q(participants__user=request.user),
+		).distinct(),
 		owner_id=user_id,
 		deleted_at__isnull=True,
 		name=group_name,
 	)
-	invite_usernames = get_user_model().objects.exclude(pk=request.user.pk).order_by('username').values_list('username', flat=True)
+	can_manage_group = group.owner_id == request.user.id
+	invite_usernames = get_user_model().objects.exclude(pk=request.user.pk).order_by('username').values_list('username', flat=True) if can_manage_group else []
 	return render(request, 'gruppe_detail.html', {
 		'group': group,
+		'can_manage_group': can_manage_group,
 		'invite_usernames': invite_usernames,
 	})
 

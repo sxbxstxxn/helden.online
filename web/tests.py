@@ -322,6 +322,78 @@ class HeroGroupViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_group_participant_can_view_group_detail_read_only(self):
+        participant = HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Phileassons Erben')
+        self.assertContains(response, 'Tsaiane')
+        self.assertNotContains(response, reverse('gruppe_bearbeiten', args=[self.group.pk]))
+        self.assertNotContains(response, reverse('gruppe_loeschen', args=[self.group.pk]))
+        self.assertNotContains(response, reverse('gruppen_teilnehmer_entfernen', args=[self.group.pk, participant.pk]))
+        self.assertNotContains(response, 'User einladen')
+
+    def test_group_participant_sees_only_own_character_as_link(self):
+        User = get_user_model()
+        other_user = User.objects.create_user(username='other_participant', password='testpass123')
+        own_participant = HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        other_character = Character.objects.create(
+            owner=other_user,
+            name='Fremder Gruppenheld',
+            species='Mensch',
+            culture='Andergast',
+            courage=12,
+            sagacity=12,
+            intuition=12,
+            charisma=12,
+            dexterity=12,
+            agility=12,
+            constitution=12,
+            strength=12,
+        )
+        other_participant = HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=other_user,
+            character=other_character,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
+        self.assertContains(response, reverse('charakter_detail', args=[self.invited.pk, self.character.name]))
+        self.assertNotContains(response, reverse('charakter_detail', args=[other_user.pk, other_character.name]))
+        self.assertContains(response, 'gruppen-participant-link-static')
+        self.assertContains(response, 'Fremder Gruppenheld')
+
+        self.client.force_login(self.owner)
+        owner_response = self.client.get(reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
+        self.assertContains(owner_response, reverse('charakter_detail', args=[self.invited.pk, self.character.name]))
+        self.assertContains(owner_response, reverse('charakter_detail', args=[other_user.pk, other_character.name]))
+
+    def test_character_detail_links_participant_to_group_detail(self):
+        HeroGroupParticipant.objects.create(
+            group=self.group,
+            user=self.invited,
+            character=self.character,
+        )
+        self.client.force_login(self.invited)
+
+        response = self.client.get(reverse('charakter_detail', args=[self.invited.pk, self.character.name]))
+
+        self.assertContains(response, reverse('gruppe_detail', args=[self.owner.pk, self.group.name]))
+
     def test_user_can_edit_own_group(self):
         self.client.force_login(self.owner)
 
@@ -730,7 +802,8 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, 'class="helden-summary-groups"')
         self.assertContains(response, 'helden-summary-group-active')
         self.assertContains(response, 'Siebenwind Runde')
-        self.assertContains(detail_response, 'Aktiv in: Siebenwind Runde')
+        self.assertContains(detail_response, 'Aktiv in:')
+        self.assertContains(detail_response, 'Siebenwind Runde')
 
     def test_helden_shows_badge_for_each_active_group(self):
         User = get_user_model()

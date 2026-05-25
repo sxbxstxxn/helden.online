@@ -38,7 +38,10 @@
                             {% for participation in character.active_group_participations %}
                                 <p class="helden-group-status">
                                     <span class="material-icons md-fw">family_restroom</span>
-                                    Aktiv in: {{ participation.group.name }}
+                                    Aktiv in:
+                                    <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">
+                                        {{ participation.group.name }}
+                                    </a>
                                 </p>
                                 {% if can_manage_character %}
                                     <p>

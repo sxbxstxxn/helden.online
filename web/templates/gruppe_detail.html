@@ -11,14 +11,16 @@
         <div class="heon-container heon-grey heon-page-panel">
             <div class="gruppen-heading heon-page-heading">
                 <h2><span class="material-icons md-fw">family_restroom</span> {{ group.name }}</h2>
-                <div class="gruppen-actions">
-                    <a href="{% url 'gruppe_bearbeiten' group.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
-                        <span class="material-icons md-fw">edit</span>
-                    </a>
-                    <a href="{% url 'gruppe_loeschen' group.pk %}" class="heon-button heon-red" title="L&ouml;schen">
-                        <span class="material-icons md-fw">delete</span>
-                    </a>
-                </div>
+                {% if can_manage_group %}
+                    <div class="gruppen-actions">
+                        <a href="{% url 'gruppe_bearbeiten' group.pk %}" class="heon-button heon-light-grey" title="Bearbeiten">
+                            <span class="material-icons md-fw">edit</span>
+                        </a>
+                        <a href="{% url 'gruppe_loeschen' group.pk %}" class="heon-button heon-red" title="L&ouml;schen">
+                            <span class="material-icons md-fw">delete</span>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
             <div class="heon-container heon-white heon-padding">
                 <div class="gruppen-detail-summary">
@@ -42,7 +44,11 @@
                         <div class="helden-list">
                             {% for participant in group.participants.all %}
                                 <article class="gruppen-participant-tile">
-                                    <a class="gruppen-participant-link" href="{% url 'charakter_detail' participant.character.owner_id participant.character.name %}">
+                                    {% if can_manage_group or participant.user_id == request.user.id %}
+                                        <a class="gruppen-participant-link" href="{% url 'charakter_detail' participant.character.owner_id participant.character.name %}">
+                                    {% else %}
+                                        <div class="gruppen-participant-link gruppen-participant-link-static">
+                                    {% endif %}
                                         {% if participant.character.portrait %}
                                             <img src="{{ participant.character.portrait.url }}" alt="{{ participant.character.name }}" class="helden-portrait helden-portrait-summary">
                                         {% else %}
@@ -55,13 +61,21 @@
                                             <small>Spieler: {{ participant.user.get_full_name|default:participant.user.username }}</small>
                                         </span>
                                         <span>{{ participant.character.species }} &middot; {{ participant.character.culture }}</span>
-                                        <span class="material-icons md-fw">chevron_right</span>
-                                    </a>
-                                    <div class="gruppen-participant-actions">
-                                        <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">
-                                            <span class="material-icons md-fw">person_remove</span>
+                                        {% if can_manage_group or participant.user_id == request.user.id %}
+                                            <span class="material-icons md-fw">chevron_right</span>
+                                        {% endif %}
+                                    {% if can_manage_group or participant.user_id == request.user.id %}
                                         </a>
-                                    </div>
+                                    {% else %}
+                                        </div>
+                                    {% endif %}
+                                    {% if can_manage_group %}
+                                        <div class="gruppen-participant-actions">
+                                            <a href="{% url 'gruppen_teilnehmer_entfernen' group.pk participant.pk %}" class="heon-button heon-red" title="Entfernen">
+                                                <span class="material-icons md-fw">person_remove</span>
+                                            </a>
+                                        </div>
+                                    {% endif %}
                                 </article>
                             {% endfor %}
                         </div>
@@ -70,7 +84,7 @@
                     {% endif %}
                 </div>
 
-                {% if group.pending_invitations %}
+                {% if can_manage_group and group.pending_invitations %}
                     <div class="gruppen-pending-invitations">
                         <h4>Offene Einladungen</h4>
                         <ul>
@@ -80,7 +94,7 @@
                         </ul>
                     </div>
                 {% endif %}
-                {% if group.available_invitation_count > 0 %}
+                {% if can_manage_group and group.available_invitation_count > 0 %}
                     <form method="post" action="{% url 'gruppe_einladen' group.pk %}" class="gruppen-invite-form">
                         {% csrf_token %}
                         <label class="heon-text" for="invite-username-{{ group.pk }}">User einladen</label>
@@ -92,7 +106,11 @@
                 {% endif %}
 
                 <div class="gruppen-form-actions">
-                    <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
+                    {% if can_manage_group %}
+                        <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
+                    {% else %}
+                        <a href="{% url 'helden' %}" class="heon-button heon-light-grey">Zur&uuml;ck zur &Uuml;bersicht</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
