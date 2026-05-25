@@ -549,3 +549,19 @@ def impressum(request):
 
 def datenschutz(request):
 	return render(request,'datenschutz.html')
+
+
+def not_found(request, exception):
+	return render(request, 'error.html', {
+		'error_code': 404,
+		'error_title': 'Seite nicht gefunden',
+		'error_message': 'Die angeforderte Seite ist nicht erreichbar. Bitte pruefe die Adresse oder gehe zurueck zur Uebersicht.',
+	}, status=404)
+
+
+def permission_denied(request, exception):
+	return render(request, 'error.html', {
+		'error_code': 403,
+		'error_title': 'Zugriff nicht moeglich',
+		'error_message': 'Diese Seite ist fuer dich nicht aufrufbar. Moeglicherweise fehlen dir die notwendigen Berechtigungen.',
+	}, status=403)

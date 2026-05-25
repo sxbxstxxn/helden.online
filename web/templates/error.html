@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_title }}{% endblock title %}
+
+{% block content %}
+<div class="heon-row heon-page-row">
+    <div class="heon-col m2 heon-hide-small">&nbsp;</div>
+    <div class="heon-col m8 s12">
+        <div class="heon-container heon-grey heon-page-panel">
+            <div class="heon-error-heading heon-page-heading">
+                <h2><span class="material-icons md-fw">error_outline</span> {{ error_title }}</h2>
+            </div>
+            <div class="heon-container heon-white heon-padding">
+                <div class="heon-error-state">
+                    <span class="heon-error-code">{{ error_code }}</span>
+                    <p>{{ error_message }}</p>
+                    <div class="heon-error-actions">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'web' %}" class="heon-button heon-light-grey">
+                                <span class="material-icons md-fw">home</span> Startseite
+                            </a>
+                            <a href="{% url 'helden' %}" class="heon-button heon-blue">
+                                <span class="material-icons md-fw">accessibility</span> Helden
+                            </a>
+                        {% else %}
+                            <a href="{% url 'web' %}" class="heon-button heon-light-grey">
+                                <span class="material-icons md-fw">home</span> Startseite
+                            </a>
+                            <a href="{% url 'account_login' %}" class="heon-button heon-blue">
+                                <span class="material-icons md-fw">login</span> Anmelden
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="heon-col m2">&nbsp;</div>
+</div>
+{% endblock content %}

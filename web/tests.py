@@ -2,16 +2,19 @@ import base64
 import io
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
 from django.core import mail
 from django.core.cache import cache
 from django.core.mail.backends.base import BaseEmailBackend
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 from smtplib import SMTPException
 from unittest.mock import patch
 
+from . import views
 from .forms import CharacterForm, HeroGroupForm
 from .models import Character, HeroGroup, HeroGroupInvitation, HeroGroupParticipant, Message
 from .rss import get_rss_news
@@ -88,6 +91,25 @@ class LoginRequiredTests(TestCase):
 
                 self.assertEqual(response.status_code, 302)
                 self.assertIn('/accounts/login/', response['Location'])
+
+
+class ErrorPageTests(TestCase):
+    @override_settings(DEBUG=False, ALLOWED_HOSTS=['testserver'])
+    def test_unknown_url_uses_custom_error_page(self):
+        response = self.client.get('/gibt-es-nicht/')
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, 'error.html')
+        self.assertContains(response, 'Seite nicht gefunden', status_code=404)
+
+    def test_permission_denied_uses_custom_error_page(self):
+        request = RequestFactory().get('/geschuetzt/')
+        request.user = AnonymousUser()
+
+        response = views.permission_denied(request, PermissionDenied())
+
+        self.assertEqual(response.status_code, 403)
+        self.assertIn(b'Zugriff nicht moeglich', response.content)
 
 
 @override_settings(

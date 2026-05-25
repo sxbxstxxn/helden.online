@@ -45,6 +45,38 @@ h5 {
   padding-bottom: 20px;
 }
 
+.heon-error-heading h2 {
+  margin: 0;
+}
+
+.heon-error-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 12px;
+  text-align: center;
+}
+
+.heon-error-code {
+  color: #505050;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.heon-error-state p {
+  margin: 0;
+  max-width: 520px;
+}
+
+.heon-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
 .heon-main-sidebar {
   display: flex;
   flex-direction: column;

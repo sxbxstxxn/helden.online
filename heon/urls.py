@@ -25,5 +25,8 @@ urlpatterns = [
 	path('', include('web.urls')),
 ]
 
+handler404 = 'web.views.not_found'
+handler403 = 'web.views.permission_denied'
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
