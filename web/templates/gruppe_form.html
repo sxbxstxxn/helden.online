@@ -8,9 +8,19 @@
     <div class="heon-col m2 heon-hide-small">&nbsp;</div>
     <div class="heon-col m8 s12">
         <div class="heon-container heon-grey heon-page-panel">
-            <h2 class="heon-page-heading">{{ title }}</h2>
+            <div class="gruppen-heading heon-page-heading">
+                <h2>{{ title }}</h2>
+                <div class="gruppen-actions">
+                    <button class="heon-button heon-blue" type="submit" form="group-form" title="{{ submit_label }}">
+                        <span class="material-icons md-fw">save</span>
+                    </button>
+                    <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey" title="Abbrechen">
+                        <span class="material-icons md-fw">cancel</span>
+                    </a>
+                </div>
+            </div>
             <div class="heon-container heon-white heon-padding">
-                <form method="post" enctype="multipart/form-data">
+                <form id="group-form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
@@ -26,11 +36,6 @@
                     {{ form.portrait.errors }}
                     {{ form.portrait }}
                     <p class="heon-small heon-text-grey">Quadratisch, maximal 256 x 256 Pixel und 200 KB.</p>
-
-                    <div class="gruppen-form-actions">
-                        <button class="heon-button heon-blue" type="submit">{{ submit_label }}</button>
-                        <a href="{% url 'gruppen' %}" class="heon-button heon-light-grey">Abbrechen</a>
-                    </div>
                 </form>
             </div>
         </div>
