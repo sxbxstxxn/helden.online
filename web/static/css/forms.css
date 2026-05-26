@@ -664,15 +664,25 @@ h2.heon-page-heading {
   margin: 0;
 }
 
-.helden-attribute-grid dt {
+.helden-attribute-grid dt,
+.helden-form-attribute label {
   color: #505050;
+  display: block;
   font-size: 12px;
   font-weight: 700;
+  line-height: 14px;
+  margin: 0;
 }
 
-.helden-attribute-grid dd {
+.helden-attribute-grid dd,
+.helden-form-attribute input.heon-input {
+  box-sizing: border-box;
+  display: block;
   font-size: 18px;
   font-weight: 700;
+  height: 22px;
+  line-height: 22px;
+  margin: 0;
 }
 
 .helden-empty {
@@ -709,23 +719,22 @@ h2.heon-page-heading {
   text-align: center;
 }
 
-.helden-form-attribute label {
-  color: #505050;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
 .helden-form-attribute input.heon-input {
   background: transparent;
   border: 0;
-  display: block;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: normal;
-  margin: 0;
   padding: 0;
   text-align: center;
+}
+
+.helden-form-attribute input.heon-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.helden-form-attribute input.heon-input[type="number"]::-webkit-inner-spin-button,
+.helden-form-attribute input.heon-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .helden-form-actions {
