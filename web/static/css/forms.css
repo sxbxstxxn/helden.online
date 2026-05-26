@@ -243,6 +243,22 @@ textarea.heon-input {
   margin: 0;
 }
 
+.helden-heading > input.heon-input {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #242321;
+  flex: 1 1 auto;
+  font-size: 16px;
+  font-weight: 600;
+  height: 38px;
+  line-height: 20px;
+  margin: 0;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
 .helden-title-with-badges {
   align-items: center;
   display: flex;
@@ -576,7 +592,7 @@ textarea.heon-input {
   display: flex;
   flex: 0 0 auto;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 0;
 }
 
 .helden-attribute-grid {

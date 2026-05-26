@@ -9,7 +9,12 @@
     <div class="heon-col m8 s12">
         <div class="heon-container heon-grey heon-page-panel">
             <div class="helden-heading heon-page-heading">
-                <h2>{{ title }}</h2>
+                {% if character %}
+                    {{ form.name.errors }}
+                    {{ form.name }}
+                {% else %}
+                    <h2>{{ title }}</h2>
+                {% endif %}
                 <div class="helden-actions">
                     <button class="heon-button heon-blue" type="submit" form="character-form" title="{{ submit_label }}">
                         <span class="material-icons md-fw">save</span>
@@ -24,10 +29,12 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
-                    <div class="helden-form-section">
-                        {{ form.name.errors }}
-                        {{ form.name }}
-                    </div>
+                    {% if not character %}
+                        <div class="helden-form-section">
+                            {{ form.name.errors }}
+                            {{ form.name }}
+                        </div>
+                    {% endif %}
 
                     {% if character %}
                         <div class="helden-character-group-row">
