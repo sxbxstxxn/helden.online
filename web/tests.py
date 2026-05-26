@@ -1044,8 +1044,13 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, 'class="helden-summary-groups"')
         self.assertContains(response, 'helden-summary-group-active')
         self.assertContains(response, 'Siebenwind Runde')
-        self.assertContains(detail_response, 'Aktiv in:')
         self.assertContains(detail_response, 'Siebenwind Runde')
+        self.assertContains(detail_response, 'helden-title-groups')
+        self.assertContains(detail_response, 'helden-summary-group-active')
+        self.assertNotContains(detail_response, reverse('charakter_gruppe_verlassen', args=[
+            self.character.pk,
+            HeroGroupParticipant.objects.get(group=group, character=self.character).pk,
+        ]))
 
     def test_helden_shows_badge_for_each_active_group(self):
         User = get_user_model()
@@ -1075,16 +1080,21 @@ class CharacterViewTests(TestCase):
 
         response = self.client.get(reverse('helden'))
         detail_response = self.client.get(reverse('charakter_detail', args=[self.owner.pk, self.character.name]))
+        edit_response = self.client.get(reverse('charakter_bearbeiten', args=[self.character.pk]))
 
         self.assertContains(response, 'Erste Runde')
         self.assertContains(response, 'Zweite Runde')
         self.assertContains(
-            detail_response,
+            edit_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, first_participation.pk]),
         )
         self.assertContains(
-            detail_response,
+            edit_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, second_participation.pk]),
+        )
+        self.assertNotContains(
+            detail_response,
+            reverse('charakter_gruppe_verlassen', args=[self.character.pk, first_participation.pk]),
         )
 
     def test_character_detail_is_only_visible_to_owner(self):

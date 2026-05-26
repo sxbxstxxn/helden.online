@@ -243,6 +243,21 @@ textarea.heon-input {
   margin: 0;
 }
 
+.helden-title-with-badges {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.helden-title-groups {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
 .helden-list {
   display: grid;
   gap: 16px;

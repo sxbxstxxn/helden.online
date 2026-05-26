@@ -29,6 +29,34 @@
                         {{ form.name }}
                     </div>
 
+                    {% if character %}
+                        <div class="helden-character-group-row">
+                            {% if character.active_group_participations %}
+                                {% for participation in character.active_group_participations %}
+                                    <div class="helden-character-group-item">
+                                        <p class="helden-group-status">
+                                            <span class="material-icons md-fw">family_restroom</span>
+                                            Aktiv in:
+                                            <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">
+                                                {{ participation.group.name }}
+                                            </a>
+                                        </p>
+                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave" title="Gruppe verlassen">
+                                            <span class="material-icons md-fw">logout</span>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="helden-character-group-item">
+                                    <p class="helden-group-status">
+                                        <span class="material-icons md-fw">family_restroom</span>
+                                        In keiner Gruppe aktiv
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
                     <div class="helden-form-section helden-character-layout">
                         <div class="helden-character-portrait-panel">
                             {{ form.portrait.errors }}

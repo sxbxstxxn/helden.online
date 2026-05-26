@@ -143,6 +143,11 @@ def charakter_bearbeiten(request, pk):
 			return redirect('helden')
 	else:
 		form = CharacterForm(instance=character)
+	character.active_group_participations = HeroGroupParticipant.objects.select_related('group').filter(
+		character=character,
+		user=request.user,
+		group__deleted_at__isnull=True,
+	)
 	return render(request, 'charakter_form.html', {
 		'form': form,
 		'title': 'Charakter bearbeiten',
