@@ -258,6 +258,10 @@ textarea.heon-input {
   min-width: 0;
 }
 
+.helden-title-groups a {
+  text-decoration: none;
+}
+
 .helden-list {
   display: grid;
   gap: 16px;
