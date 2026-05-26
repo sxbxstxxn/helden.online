@@ -139,6 +139,22 @@ Statische Dateien sammeln, falls später für Produktion gebraucht:
 docker compose exec web python manage.py collectstatic
 ```
 
+## Uploads und Media-Dateien
+
+Hochgeladene Bilder fuer Charaktere und Gruppen liegen unter `/app/media` und werden ueber `/media/` ausgeliefert. Im Docker-Setup werden `media` und `staticfiles` als Ordner aus dem Projektverzeichnis in den Container gemountet, damit Uploads und gesammelte Static Files erhalten bleiben.
+
+Wenn kein separater Webserver wie Nginx die Media-Dateien ausliefert, setze in der `.env`:
+
+```env
+SERVE_MEDIA_FILES=True
+```
+
+Danach den Web-Container neu erstellen/starten, damit `.env` und Volume-Mounts neu eingelesen werden:
+
+```bash
+docker compose up -d --force-recreate web
+```
+
 ## Datenbank
 
 Für lokale Entwicklung nutzt `.env.example` jetzt PostgreSQL:

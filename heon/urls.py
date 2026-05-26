@@ -28,5 +28,5 @@ urlpatterns = [
 handler404 = 'web.views.not_found'
 handler403 = 'web.views.permission_denied'
 
-if settings.DEBUG:
+if settings.SERVE_MEDIA_FILES:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
