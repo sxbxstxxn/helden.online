@@ -8,10 +8,26 @@
     <div class="heon-col m2 heon-hide-small">&nbsp;</div>
     <div class="heon-col m8 s12">
         <div class="heon-container heon-grey heon-page-panel">
+            <form id="character-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
             <div class="helden-heading heon-page-heading">
                 {% if character %}
-                    {{ form.name.errors }}
-                    {{ form.name }}
+                    <div class="helden-edit-title">
+                        {{ form.name.errors }}
+                        {{ form.name }}
+                        {% if character.active_group_participations %}
+                            <span class="helden-title-groups">
+                                {% for participation in character.active_group_participations %}
+                                    <span class="helden-summary-group helden-summary-group-active helden-edit-group-badge">
+                                        <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">{{ participation.group.name }}</a>
+                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="helden-edit-group-leave" title="Gruppe verlassen">
+                                            <span class="material-icons md-fw">close</span>
+                                        </a>
+                                    </span>
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+                    </div>
                 {% else %}
                     <h2>{{ title }}</h2>
                 {% endif %}
@@ -25,42 +41,12 @@
                 </div>
             </div>
             <div class="heon-container heon-white heon-padding">
-                <form id="character-form" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
                     {{ form.non_field_errors }}
 
                     {% if not character %}
                         <div class="helden-form-section">
                             {{ form.name.errors }}
                             {{ form.name }}
-                        </div>
-                    {% endif %}
-
-                    {% if character %}
-                        <div class="helden-character-group-row">
-                            {% if character.active_group_participations %}
-                                {% for participation in character.active_group_participations %}
-                                    <div class="helden-character-group-item">
-                                        <p class="helden-group-status">
-                                            <span class="material-icons md-fw">family_restroom</span>
-                                            Aktiv in:
-                                            <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">
-                                                {{ participation.group.name }}
-                                            </a>
-                                        </p>
-                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave" title="Gruppe verlassen">
-                                            <span class="material-icons md-fw">logout</span>
-                                        </a>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="helden-character-group-item">
-                                    <p class="helden-group-status">
-                                        <span class="material-icons md-fw">family_restroom</span>
-                                        In keiner Gruppe aktiv
-                                    </p>
-                                </div>
-                            {% endif %}
                         </div>
                     {% endif %}
 
@@ -132,8 +118,8 @@
                             {{ form.strength }}
                         </div>
                     </div>
-                </form>
             </div>
+            </form>
         </div>
     </div>
     <div class="heon-col m2">&nbsp;</div>

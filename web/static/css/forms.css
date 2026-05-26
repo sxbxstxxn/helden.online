@@ -250,6 +250,16 @@ h2.heon-page-heading {
   margin: 0;
 }
 
+.helden-edit-title {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.helden-edit-title > input.heon-input,
 .helden-heading > input.heon-input {
   background: #fff;
   border: 1px solid #ddd;
@@ -264,6 +274,31 @@ h2.heon-page-heading {
   margin: 0;
   min-width: 0;
   padding: 8px 10px;
+}
+
+.helden-edit-title > input.heon-input {
+  max-width: 360px;
+}
+
+.helden-edit-group-badge {
+  align-items: center;
+  display: inline-flex;
+  gap: 5px;
+  padding-right: 7px;
+}
+
+.helden-edit-group-badge a {
+  text-decoration: none;
+}
+
+.helden-edit-group-leave {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.helden-edit-group-leave .material-icons {
+  font-size: 16px;
 }
 
 .helden-title-with-badges {
@@ -1059,6 +1094,14 @@ h2.heon-page-heading {
 
   .helden-character-basics {
     grid-template-columns: 1fr;
+  }
+
+  .helden-edit-title {
+    width: 100%;
+  }
+
+  .helden-edit-title > input.heon-input {
+    max-width: none;
   }
 
   .helden-character-group-item {
