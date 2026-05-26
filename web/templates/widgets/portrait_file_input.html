@@ -1,19 +1,26 @@
 <div class="portrait-upload">
-    {% if widget.is_initial %}
-        <div class="portrait-upload-current">
+    <div class="portrait-upload-frame">
+        {% if widget.is_initial %}
             <img src="{{ widget.value.url }}" alt="Aktuelles Bild" class="helden-portrait helden-portrait-detail">
+            <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder portrait-upload-cleared-placeholder" aria-hidden="true">
+                <span class="material-icons md-fw">person</span>
+            </span>
+        {% else %}
+            <span class="helden-portrait helden-portrait-detail helden-portrait-placeholder" aria-hidden="true">
+                <span class="material-icons md-fw">person</span>
+            </span>
+        {% endif %}
+        <div class="portrait-upload-actions">
             {% if not widget.required %}
                 <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" class="portrait-upload-clear-checkbox">
-                <button class="heon-button heon-red portrait-upload-clear-button" type="button" data-clear-target="{{ widget.checkbox_id }}">
+                <button class="heon-button heon-red portrait-upload-clear-button" type="button" data-clear-target="{{ widget.checkbox_id }}" title="Bild entfernen">
                     <span class="material-icons md-fw">delete</span>
-                    Bild entfernen
                 </button>
             {% endif %}
+            <label class="heon-button heon-light-grey portrait-upload-button" for="{{ widget.attrs.id }}" title="Bild ausw&auml;hlen">
+                <span class="material-icons md-fw">upload_file</span>
+            </label>
         </div>
-    {% endif %}
-    <label class="heon-button heon-light-grey portrait-upload-button" for="{{ widget.attrs.id }}">
-        <span class="material-icons md-fw">upload_file</span>
-        Bild ausw&auml;hlen
-    </label>
+    </div>
     <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
 </div>

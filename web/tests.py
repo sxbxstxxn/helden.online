@@ -458,8 +458,8 @@ class HeroGroupViewTests(TestCase):
         response = self.client.get(reverse('gruppe_bearbeiten', args=[self.group.pk]))
 
         self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
-        self.assertContains(response, 'Bild ausw&auml;hlen')
-        self.assertContains(response, 'Bild entfernen')
+        self.assertContains(response, 'title="Bild ausw&auml;hlen"')
+        self.assertContains(response, 'title="Bild entfernen"')
         self.assertContains(response, 'portrait-upload-clear-button')
         self.assertContains(response, 'portrait-upload-clear-checkbox')
 
@@ -1000,8 +1000,8 @@ class CharacterViewTests(TestCase):
         response = self.client.get(reverse('charakter_bearbeiten', args=[self.character.pk]))
 
         self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
-        self.assertContains(response, 'Bild ausw&auml;hlen')
-        self.assertContains(response, 'Bild entfernen')
+        self.assertContains(response, 'title="Bild ausw&auml;hlen"')
+        self.assertContains(response, 'title="Bild entfernen"')
         self.assertContains(response, 'portrait-upload-clear-button')
         self.assertContains(response, 'portrait-upload-clear-checkbox')
 

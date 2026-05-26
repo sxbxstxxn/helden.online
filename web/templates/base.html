@@ -89,9 +89,26 @@ document.addEventListener('click', function(event) {
   if (!checkbox) {
     return;
   }
-  checkbox.checked = !checkbox.checked;
-  button.classList.toggle('heon-light-grey', checkbox.checked);
-  button.classList.toggle('heon-red', !checkbox.checked);
+  checkbox.checked = true;
+  var upload = button.closest('.portrait-upload');
+  if (upload) {
+    upload.classList.add('portrait-upload-cleared');
+  }
+});
+
+document.addEventListener('change', function(event) {
+  if (!event.target.matches('.portrait-upload input[type="file"]')) {
+    return;
+  }
+  var upload = event.target.closest('.portrait-upload');
+  if (!upload) {
+    return;
+  }
+  var checkbox = upload.querySelector('.portrait-upload-clear-checkbox');
+  if (checkbox) {
+    checkbox.checked = false;
+  }
+  upload.classList.remove('portrait-upload-cleared');
 });
 </script>
 

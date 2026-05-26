@@ -26,10 +26,8 @@
 
                     <div class="helden-form-section helden-character-layout">
                         <div class="helden-character-portrait-panel">
-                            <label class="heon-text" for="{{ form.portrait.id_for_label }}">{{ form.portrait.label }}</label>
                             {{ form.portrait.errors }}
                             {{ form.portrait }}
-                            <p class="heon-small heon-text-grey">Quadratisch, maximal 256 x 256 Pixel und 200 KB.</p>
                         </div>
                         <div class="helden-character-main">
                             <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
@@ -56,7 +54,6 @@
                         </div>
                     </div>
 
-                    <h3>Eigenschaften</h3>
                     <div class="helden-form-attribute-grid">
                         <div class="helden-form-attribute">
                             <label class="heon-text" for="{{ form.courage.id_for_label }}">{{ form.courage.label }}</label>

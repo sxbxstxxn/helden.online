@@ -307,15 +307,37 @@ textarea.heon-input {
   align-items: stretch;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   margin: 8px 0;
 }
 
-.portrait-upload-current {
-  align-items: flex-start;
+.portrait-upload-frame {
+  display: inline-flex;
+  position: relative;
+  width: max-content;
+}
+
+.portrait-upload-cleared-placeholder {
+  display: none;
+}
+
+.portrait-upload-cleared img {
+  display: none;
+}
+
+.portrait-upload-cleared .portrait-upload-cleared-placeholder {
+  display: inline-flex;
+}
+
+.portrait-upload-cleared .portrait-upload-clear-button {
+  display: none;
+}
+
+.portrait-upload-actions {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 4px;
+  position: absolute;
+  right: 6px;
+  top: 6px;
 }
 
 .portrait-upload-clear-checkbox {
@@ -327,10 +349,13 @@ textarea.heon-input {
 .portrait-upload-button,
 .portrait-upload-clear-button {
   align-items: center;
+  border-radius: 4px;
   display: inline-flex;
   gap: 4px;
+  height: 32px;
   justify-content: center;
-  width: 170px;
+  padding: 0;
+  width: 32px;
 }
 
 .portrait-upload-clear-checkbox:checked + .portrait-upload-clear-button {
