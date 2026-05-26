@@ -461,6 +461,23 @@ textarea.heon-input {
   min-width: 0;
 }
 
+.helden-character-group-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.helden-character-group-item {
+  align-items: center;
+  background: #f3f3f3;
+  border-radius: 4px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 8px;
+}
+
 .helden-character-basics {
   display: grid;
   gap: 8px;
@@ -524,6 +541,8 @@ textarea.heon-input {
   color: #505050;
   display: flex;
   gap: 4px;
+  margin: 0;
+  min-width: 0;
 }
 
 .helden-group-status .material-icons {
@@ -531,7 +550,7 @@ textarea.heon-input {
 }
 
 .helden-group-leave {
-  margin-top: 4px;
+  flex: 0 0 auto;
 }
 
 .helden-actions {
@@ -579,6 +598,11 @@ textarea.heon-input {
 
 .helden-form-section {
   margin-bottom: 16px;
+}
+
+#character-form > .helden-form-section:first-of-type input.heon-input {
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .helden-form-grid {
@@ -993,6 +1017,11 @@ textarea.heon-input {
 
   .helden-character-basics {
     grid-template-columns: 1fr;
+  }
+
+  .helden-character-group-item {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .helden-actions,

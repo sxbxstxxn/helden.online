@@ -24,16 +24,17 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
+                    <div class="helden-form-section">
+                        {{ form.name.errors }}
+                        {{ form.name }}
+                    </div>
+
                     <div class="helden-form-section helden-character-layout">
                         <div class="helden-character-portrait-panel">
                             {{ form.portrait.errors }}
                             {{ form.portrait }}
                         </div>
                         <div class="helden-character-main">
-                            <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                            {{ form.name.errors }}
-                            {{ form.name }}
-
                             <div class="helden-character-basics helden-character-basics-form">
                                 <div>
                                     <label class="heon-text" for="{{ form.species.id_for_label }}">{{ form.species.label }}</label>

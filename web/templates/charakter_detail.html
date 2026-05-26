@@ -25,6 +25,33 @@
                 </div>
             </div>
             <div class="heon-container heon-white heon-padding">
+                <div class="helden-character-group-row">
+                    {% if character.active_group_participations %}
+                        {% for participation in character.active_group_participations %}
+                            <div class="helden-character-group-item">
+                                <p class="helden-group-status">
+                                    <span class="material-icons md-fw">family_restroom</span>
+                                    Aktiv in:
+                                    <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">
+                                        {{ participation.group.name }}
+                                    </a>
+                                </p>
+                                {% if can_manage_character %}
+                                    <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave" title="Gruppe verlassen">
+                                        <span class="material-icons md-fw">logout</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="helden-character-group-item">
+                            <p class="helden-group-status">
+                                <span class="material-icons md-fw">family_restroom</span>
+                                In keiner Gruppe aktiv
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
                 <div class="helden-detail-layout helden-character-layout">
                     <div class="helden-character-portrait-panel">
                         {% if character.portrait %}
@@ -50,29 +77,6 @@
                                 <strong>{{ character.profession }}</strong>
                             </div>
                         </div>
-                        {% if character.active_group_participations %}
-                            {% for participation in character.active_group_participations %}
-                                <p class="helden-group-status">
-                                    <span class="material-icons md-fw">family_restroom</span>
-                                    Aktiv in:
-                                    <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">
-                                        {{ participation.group.name }}
-                                    </a>
-                                </p>
-                                {% if can_manage_character %}
-                                    <p>
-                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="heon-button heon-red helden-group-leave">
-                                            <span class="material-icons md-fw">logout</span> Gruppe verlassen: {{ participation.group.name }}
-                                        </a>
-                                    </p>
-                                {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            <p class="helden-group-status">
-                                <span class="material-icons md-fw">family_restroom</span>
-                                In keiner Gruppe aktiv
-                            </p>
-                        {% endif %}
                     </div>
                 </div>
 
