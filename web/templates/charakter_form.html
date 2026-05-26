@@ -20,7 +20,7 @@
                                 {% for participation in character.active_group_participations %}
                                     <span class="helden-summary-group helden-summary-group-active helden-edit-group-badge">
                                         <a href="{% url 'gruppe_detail' participation.group.owner_id participation.group.name %}">{{ participation.group.name }}</a>
-                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="helden-edit-group-leave" title="Gruppe verlassen">
+                                        <a href="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" class="helden-edit-group-leave" title="Gruppe verlassen" data-leave-group-url="{% url 'charakter_gruppe_verlassen' character.pk participation.pk %}" data-leave-group-name="{{ participation.group.name }}" data-leave-character-name="{{ character.name }}">
                                             <span class="material-icons md-fw">close</span>
                                         </a>
                                     </span>
@@ -35,7 +35,7 @@
                     <button class="heon-button heon-blue" type="submit" form="character-form" title="{{ submit_label }}">
                         <span class="material-icons md-fw">save</span>
                     </button>
-                    <a href="{% url 'helden' %}" class="heon-button heon-light-grey" title="Abbrechen">
+                    <a href="{% if character %}{% url 'charakter_detail' character.owner_id character.name %}{% else %}{% url 'helden' %}{% endif %}" class="heon-button heon-light-grey" title="Abbrechen">
                         <span class="material-icons md-fw">cancel</span>
                     </a>
                 </div>
@@ -124,4 +124,29 @@
     </div>
     <div class="heon-col m2">&nbsp;</div>
 </div>
+{% if character %}
+    <div id="characterLeaveGroupModal" class="heon-modal character-leave-modal" aria-hidden="true">
+        <div class="heon-modal-content character-leave-modal-content">
+            <div class="heon-container heon-grey heon-page-panel">
+                <div class="helden-heading heon-page-heading">
+                    <h2>Gruppe verlassen</h2>
+                    <button class="heon-button heon-light-grey" type="button" data-leave-modal-close title="Abbrechen">
+                        <span class="material-icons md-fw">cancel</span>
+                    </button>
+                </div>
+                <div class="heon-container heon-white heon-padding">
+                    <p>Moechtest du <strong data-leave-character-name></strong> wirklich aus <strong data-leave-group-name></strong> entfernen?</p>
+                    <p>Der Gruppenersteller erhaelt danach eine Nachricht.</p>
+                    <form method="post" data-leave-modal-form>
+                        {% csrf_token %}
+                        <button class="heon-button heon-red" type="submit">
+                            <span class="material-icons md-fw">logout</span> Gruppe verlassen
+                        </button>
+                        <button class="heon-button heon-light-grey" type="button" data-leave-modal-close>Abbrechen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 {% endblock content %}

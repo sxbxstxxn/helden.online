@@ -110,6 +110,34 @@ document.addEventListener('change', function(event) {
   }
   upload.classList.remove('portrait-upload-cleared');
 });
+
+document.addEventListener('click', function(event) {
+  var trigger = event.target.closest('[data-leave-group-url]');
+  if (!trigger) {
+    return;
+  }
+  var modal = document.getElementById('characterLeaveGroupModal');
+  if (!modal) {
+    return;
+  }
+  event.preventDefault();
+  modal.querySelector('[data-leave-modal-form]').setAttribute('action', trigger.getAttribute('data-leave-group-url'));
+  modal.querySelector('[data-leave-character-name]').textContent = trigger.getAttribute('data-leave-character-name');
+  modal.querySelector('[data-leave-group-name]').textContent = trigger.getAttribute('data-leave-group-name');
+  modal.style.display = 'block';
+  modal.setAttribute('aria-hidden', 'false');
+});
+
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('[data-leave-modal-close]')) {
+    return;
+  }
+  var modal = document.getElementById('characterLeaveGroupModal');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+});
 </script>
 
 </body>

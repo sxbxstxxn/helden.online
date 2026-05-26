@@ -301,6 +301,14 @@ h2.heon-page-heading {
   font-size: 16px;
 }
 
+.character-leave-modal {
+  padding-top: 90px;
+}
+
+.character-leave-modal-content {
+  max-width: min(520px, calc(100vw - 24px));
+}
+
 .helden-title-with-badges {
   align-items: center;
   display: flex;

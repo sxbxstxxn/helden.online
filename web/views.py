@@ -202,7 +202,7 @@ def charakter_gruppe_verlassen(request, character_pk, participant_pk):
 			),
 		)
 		messages.success(request, f'{character_name} wurde aus {group.name} entfernt.')
-		return redirect('helden')
+		return redirect('charakter_bearbeiten', pk=character.pk)
 	return render(request, 'charakter_gruppe_verlassen.html', {
 		'character': character,
 		'participant': participant,

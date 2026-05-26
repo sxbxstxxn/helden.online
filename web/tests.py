@@ -1088,6 +1088,9 @@ class CharacterViewTests(TestCase):
             edit_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, first_participation.pk]),
         )
+        self.assertContains(edit_response, 'id="characterLeaveGroupModal"')
+        self.assertContains(edit_response, 'data-leave-group-url')
+        self.assertContains(edit_response, 'data-leave-modal-form')
         self.assertContains(
             edit_response,
             reverse('charakter_gruppe_verlassen', args=[self.character.pk, second_participation.pk]),
@@ -1124,7 +1127,7 @@ class CharacterViewTests(TestCase):
 
         response = self.client.post(reverse('charakter_gruppe_verlassen', args=[self.character.pk, participation.pk]))
 
-        self.assertRedirects(response, reverse('helden'))
+        self.assertRedirects(response, reverse('charakter_bearbeiten', args=[self.character.pk]))
         self.assertFalse(HeroGroupParticipant.objects.filter(pk=participation.pk).exists())
         message = Message.objects.get(recipient=group_owner, subject__contains='hat Horasische Runde verlassen')
         self.assertEqual(message.sender, self.owner)
