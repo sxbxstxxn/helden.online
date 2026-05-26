@@ -1,14 +1,14 @@
 :root {
-    --heon-greylight: #EAEAEA;
-    --heon-grey: #505050;
-    --heon-greydark: #222222;
-    --heon-orangelight: #E47429;
-    --heon-orange: #C65102;
-    --heon-orangedark: #893101;
-    --heon-gold: #CDA434;
-    --heon-green: #78C602;
-    --heon-blue: #0278C6;
-    --heon-red: #C60216;
+    --heon-greylight: #F2F1EF;
+    --heon-grey: #5A5652;
+    --heon-greydark: #242321;
+    --heon-orangelight: #F0B37A;
+    --heon-orange: #B85A1E;
+    --heon-orangedark: #7E3512;
+    --heon-gold: #C79A3A;
+    --heon-green: #6F9F4A;
+    --heon-blue: #3D6F94;
+    --heon-red: #A83B35;
 }
 
 /* W3.CSS 5.02 March 31 2025 by Jan Egil and Borge Refsnes */
