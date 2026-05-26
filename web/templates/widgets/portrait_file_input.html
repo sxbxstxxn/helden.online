@@ -3,11 +3,11 @@
         <div class="portrait-upload-current">
             <img src="{{ widget.value.url }}" alt="Aktuelles Bild" class="helden-portrait helden-portrait-detail">
             {% if not widget.required %}
-                <label class="portrait-upload-clear" for="{{ widget.checkbox_id }}">
-                    <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+                <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" class="portrait-upload-clear-checkbox">
+                <button class="heon-button heon-red portrait-upload-clear-button" type="button" data-clear-target="{{ widget.checkbox_id }}">
                     <span class="material-icons md-fw">delete</span>
                     Bild entfernen
-                </label>
+                </button>
             {% endif %}
         </div>
     {% endif %}

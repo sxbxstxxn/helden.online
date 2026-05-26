@@ -460,6 +460,8 @@ class HeroGroupViewTests(TestCase):
         self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, 'Bild ausw&auml;hlen')
         self.assertContains(response, 'Bild entfernen')
+        self.assertContains(response, 'portrait-upload-clear-button')
+        self.assertContains(response, 'portrait-upload-clear-checkbox')
 
     def test_group_portrait_must_use_same_limits_as_character_portrait(self):
         data = self.group_data()
@@ -1000,6 +1002,8 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(response, 'Bild ausw&auml;hlen')
         self.assertContains(response, 'Bild entfernen')
+        self.assertContains(response, 'portrait-upload-clear-button')
+        self.assertContains(response, 'portrait-upload-clear-checkbox')
 
     def test_character_portrait_must_be_small_square_image(self):
         data = self.character_data()

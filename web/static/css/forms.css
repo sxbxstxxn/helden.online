@@ -318,21 +318,23 @@ textarea.heon-input {
   gap: 12px;
 }
 
-.portrait-upload-clear {
-  align-items: center;
-  color: #505050;
-  display: inline-flex;
-  gap: 6px;
+.portrait-upload-clear-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.portrait-upload-clear input {
-  margin: 0;
-}
-
-.portrait-upload-button {
+.portrait-upload-button,
+.portrait-upload-clear-button {
   align-items: center;
   display: inline-flex;
   gap: 4px;
+  justify-content: center;
+  width: 170px;
+}
+
+.portrait-upload-clear-checkbox:checked + .portrait-upload-clear-button {
+  opacity: 0.72;
 }
 
 .portrait-upload input[type="file"] {
