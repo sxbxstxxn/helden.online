@@ -24,27 +24,36 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
-                    <div class="helden-form-section">
-                        <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                        {{ form.name.errors }}
-                        {{ form.name }}
+                    <div class="helden-form-section helden-character-layout">
+                        <div class="helden-character-portrait-panel">
+                            <label class="heon-text" for="{{ form.portrait.id_for_label }}">{{ form.portrait.label }}</label>
+                            {{ form.portrait.errors }}
+                            {{ form.portrait }}
+                            <p class="heon-small heon-text-grey">Quadratisch, maximal 256 x 256 Pixel und 200 KB.</p>
+                        </div>
+                        <div class="helden-character-main">
+                            <label class="heon-text" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                            {{ form.name.errors }}
+                            {{ form.name }}
 
-                        <label class="heon-text" for="{{ form.species.id_for_label }}">{{ form.species.label }}</label>
-                        {{ form.species.errors }}
-                        {{ form.species }}
-
-                        <label class="heon-text" for="{{ form.culture.id_for_label }}">{{ form.culture.label }}</label>
-                        {{ form.culture.errors }}
-                        {{ form.culture }}
-
-                        <label class="heon-text" for="{{ form.profession.id_for_label }}">{{ form.profession.label }}</label>
-                        {{ form.profession.errors }}
-                        {{ form.profession }}
-
-                        <label class="heon-text" for="{{ form.portrait.id_for_label }}">{{ form.portrait.label }}</label>
-                        {{ form.portrait.errors }}
-                        {{ form.portrait }}
-                        <p class="heon-small heon-text-grey">Quadratisch, maximal 256 x 256 Pixel und 200 KB.</p>
+                            <div class="helden-character-basics helden-character-basics-form">
+                                <div>
+                                    <label class="heon-text" for="{{ form.species.id_for_label }}">{{ form.species.label }}</label>
+                                    {{ form.species.errors }}
+                                    {{ form.species }}
+                                </div>
+                                <div>
+                                    <label class="heon-text" for="{{ form.culture.id_for_label }}">{{ form.culture.label }}</label>
+                                    {{ form.culture.errors }}
+                                    {{ form.culture }}
+                                </div>
+                                <div>
+                                    <label class="heon-text" for="{{ form.profession.id_for_label }}">{{ form.profession.label }}</label>
+                                    {{ form.profession.errors }}
+                                    {{ form.profession }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <h3>Eigenschaften</h3>

@@ -25,8 +25,8 @@
                 </div>
             </div>
             <div class="heon-container heon-white heon-padding">
-                <div class="helden-detail-layout">
-                    <div>
+                <div class="helden-detail-layout helden-character-layout">
+                    <div class="helden-character-portrait-panel">
                         {% if character.portrait %}
                             <img src="{{ character.portrait.url }}" alt="{{ character.name }}" class="helden-portrait helden-portrait-detail">
                         {% else %}
@@ -35,8 +35,21 @@
                             </span>
                         {% endif %}
                     </div>
-                    <div>
-                        <p>{{ character.species }} &middot; {{ character.culture }} &middot; {{ character.profession }}</p>
+                    <div class="helden-character-main">
+                        <div class="helden-character-basics">
+                            <div>
+                                <span>Spezies</span>
+                                <strong>{{ character.species }}</strong>
+                            </div>
+                            <div>
+                                <span>Kultur</span>
+                                <strong>{{ character.culture }}</strong>
+                            </div>
+                            <div>
+                                <span>Profession</span>
+                                <strong>{{ character.profession }}</strong>
+                            </div>
+                        </div>
                         {% if character.active_group_participations %}
                             {% for participation in character.active_group_participations %}
                                 <p class="helden-group-status">

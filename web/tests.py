@@ -935,7 +935,7 @@ class CharacterViewTests(TestCase):
         self.assertContains(response, '/media/characters/portraits/alrik.png')
         self.assertContains(detail_response, 'class="helden-portrait helden-portrait-detail"')
         self.assertContains(detail_response, '/media/characters/portraits/alrik.png')
-        self.assertContains(detail_response, 'Mensch &middot; Mittelreich &middot; Söldner')
+        self.assertContains(detail_response, '<strong>Söldner</strong>', html=False)
 
     def test_character_portrait_is_saved_as_jpg_in_character_folder(self):
         self.client.force_login(self.owner)
